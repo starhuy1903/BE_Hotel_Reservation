@@ -4,7 +4,7 @@ class userController{
     index (req,res){
         res.send("Hello from user")
     }
-    async updateUser(req, res){
+    async updateUser(req, res, next){
         try{
             const updatedUser = await User.findByIdAndUpdate(req.params.id, {$set: req.body}, {new: true})
             res.status(200).json(updatedUser)
@@ -14,7 +14,7 @@ class userController{
         }
     }
 
-    async deleteUser(req, res){
+    async deleteUser(req, res, next){
         try{
             const deletedUser = await User.findByIdAndDelete(req.params.id)
             res.status(200).json("User has been deleted")
@@ -24,10 +24,10 @@ class userController{
         }
     }
 
-    async getUser(req, res){
+    async getUser(req, res, next){
         try{
-            const User = await User.findById(req.params.id)
-            res.status(200).json(User)
+            const newUser = await User.findById(req.params.id)
+            res.status(200).json(newUser)
         }
         catch(err){
             next(err)

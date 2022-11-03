@@ -7,7 +7,7 @@ class hotelController{
     index (req,res){
         res.send("Hello from hotel")
     }
-    async createHotel(req, res){
+    async createHotel(req, res, next){
         const newHotel = new Hotel(req.body)
         try{
             const savedHotel = await newHotel.save()
@@ -17,7 +17,7 @@ class hotelController{
             next(err)
         }
     }
-    async updateHotel(req, res){
+    async updateHotel(req, res, next){
         try{
             const updatedHotel = await Hotel.findByIdAndUpdate(req.params.id, {$set: req.body}, {new: true})
             res.status(200).json(updatedHotel)
@@ -27,7 +27,7 @@ class hotelController{
         }
     }
 
-    async deleteHotel(req, res){
+    async deleteHotel(req, res, next){
         try{
             const deletedHotel = await Hotel.findByIdAndDelete(req.params.id)
             res.status(200).json("Hotel has been deleted")
@@ -37,7 +37,7 @@ class hotelController{
         }
     }
 
-    async getHotel(req, res){
+    async getHotel(req, res, next){
         try{
             const hotel = await Hotel.findById(req.params.id)
             res.status(200).json(hotel)

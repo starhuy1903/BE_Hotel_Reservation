@@ -2,13 +2,13 @@ const authRoute = require("./auth")
 const userRoute = require("./users")
 const roomRoute = require("./rooms")
 const hotelRoute = require("./hotels")
-
+const categoryRoute = require("./category")
 function route(app){
     app.use("/auth", authRoute)
     app.use("/hotel", hotelRoute)
     app.use("/room", roomRoute)
     app.use("/user", userRoute)
-    
+    app.use("/category", categoryRoute)
     app.use((err,req,res,next)=>{
         errorStatus = err.status || 500
         errMessage = err.message || ("Something went wrong")

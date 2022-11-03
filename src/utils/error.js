@@ -5,7 +5,6 @@ function createError(status, message){
     return err
 }
 
-
 module.exports = createError
 
 /*export const createError = (status, message) => { 

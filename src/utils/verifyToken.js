@@ -13,7 +13,7 @@ function verifyToken(req, res, next){
 }
 
 function verifyUser(req, res, next){
-    if(req.user.id === req.params.id || req.user.isAdmin ){
+    if(req.user.id === req.params.id){
         next()
     }
     else{
@@ -22,7 +22,8 @@ function verifyUser(req, res, next){
 }
 
 function verifyAdmin(req, res, next){
-    if(req.user.isAdmin){
+   
+    if(req.user.roles.some((e)=>e==="admin")){
        next()
     }
     else{

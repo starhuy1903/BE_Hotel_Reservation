@@ -9,18 +9,10 @@ class roomController{
         res.send("Hello from room")
     }
     async createRoom(req, res){
-        const hotel = req.params.HotelId
+        
         const newroom = new Room(req.body)
         try{
             const savedroom = await newroom.save()
-            try{
-                await Hotel.findByIdAndUpdate(hotel, {
-                    $push: {rooms: savedroom._id},
-                })
-            }
-            catch(err){
-                next(err)
-            }
             res.status(200).json(savedroom)
         }
         catch(err){
@@ -40,15 +32,6 @@ class roomController{
     async deleteRoom(req, res){
         try{
             const deletedRoom = await Room.findByIdAndDelete(req.params.id)
-            const hotel = req.params.HotelId
-            try{
-                await Hotel.findByIdAndUpdate(hotel, {
-                    $pull: {rooms: req.params.id},
-                })
-            }
-            catch(err){
-                next(err)
-            }
             res.status(200).json("room has been deleted")
         }
         catch(err){

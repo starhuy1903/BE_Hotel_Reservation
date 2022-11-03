@@ -18,19 +18,3 @@ app.listen(8800, ()=>{
 })
 
 
-/*console.log(os.homedir())
-console.log(os.type())
-console.log(os.version())
-
-console.log(__dirname)
-console.log(__filename)
-
-console.log(path.dirname(__filename))
-console.log(path.basename(__filename))
-console.log(path.extname(__filename))
-
-console.log("start");
-setTimeout(() => console.log("settimeOut"), 0)
-Promise.resolve().then(() => console.log("Promise"))
-console.log("End")*/
-

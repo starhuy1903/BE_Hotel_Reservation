@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const userController = require("../app/controller/userController")
 const verify = require("../utils/verifyToken")
-router.get("/", userController.index)
+
 
 /*router.get("/checkAuthentication", verify.verifyToken, (req, res, next)=>{
     res.send("Hello user, you're logged in")
