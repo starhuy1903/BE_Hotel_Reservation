@@ -28,6 +28,10 @@ router.get("/get/:id",verify.verifyToken, verify.verifyUser, userController.getU
 //GETALL
 router.get("/get",verify.verifyToken, verify.verifyAdmin, userController.getAllUser)
 
+
+//RESET PASSWORD
+router.get("/password-reset/:id",verify.verifyResetPasswordToken, userController.resetPassword)
+
 //Default
 router.get("/", userController.index)
 

@@ -1,11 +1,13 @@
 const nodemailer = require('nodemailer')
+const createError = require("./error")
 // SET UP CAU HINH DE GUI MAIL
 module.exports = async (email,subject,text) => {
     try {
         const transporter = nodemailer.createTransport({
-            host: process.env.PORT,
+            host: process.env.HOST,
             service: process.env.SERVICE,
-            port: 587,
+            port: 465,
+            requireTLS: false,
             secure: true,
             auth: {
                 user: process.env.USER,
