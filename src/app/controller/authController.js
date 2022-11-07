@@ -26,6 +26,7 @@ class authController{
                 phoneNumber: req.body.phoneNumber,
                 isActive: req.body.isActive
             })
+
             await newUser.save()
             res.status(201).send("Create new user successfully")
         }
