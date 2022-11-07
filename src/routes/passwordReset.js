@@ -6,6 +6,8 @@ const crypto = require('cypto');
 const jwt = require("jsonwebtoken")
 const router = express.Router();
 
+// CREATE TOKEN DUNG THU VIEN THAY VI TAO BANG TOKEN SET TAY
+// VALIDATE CHUA HOAN THANH
 const Token = jwt.createToken({id: user._id, roles: user.roles, createdAt: Date.now()}, process.env.JWT)
 
 router.post("/", async (req, res) => {

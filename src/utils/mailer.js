@@ -1,5 +1,5 @@
 const nodemailer = require('nodemailer')
-
+// SET UP CAU HINH DE GUI MAIL
 module.exports = async (email,subject,text) => {
     try {
         const transporter = nodemailer.createTransport({

@@ -2,7 +2,13 @@ const User = require("../models/user")
 const bcrypt = require('bcryptjs')
 const createError = require("../../utils/error")
 const jwt = require("jsonwebtoken")
-// const mailer = require("../../utils/mailer")
+const passwordReset = require("../routes/passwordReset");
+const connection = require("../config/db");
+
+app.use(express.json());
+//  Can phai chinh qua BODY -> raw -> text chuyen thanh JSON
+// SET UP MAIL MAC DINH TRONG FILE .ENV 
+app.use("/api/password-reset", passwordReset);
 
 class authController{
     index(req,res){
@@ -18,10 +24,6 @@ class authController{
                 email: req.body.email,
                 roles: req.body.roles
             })
-            // User.create(user, (err, user) => {
-            //     if(!err){
-
-            //     }
 
             await newUser.save()
             res.status(201).send("Create new user successfully")
