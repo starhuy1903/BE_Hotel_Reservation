@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const userController = require("../app/controller/userController")
 const verify = require("../utils/verifyToken")
-const {validate} = require("../models/user")
+const {validate} = require("../app/models/user")
 
 
 /*router.get("/checkAuthentication", verify.verifyToken, (req, res, next)=>{
@@ -28,6 +28,10 @@ router.get("/get/:id",verify.verifyToken, verify.verifyUser, userController.getU
 
 //GETALL
 router.get("/get",verify.verifyToken, verify.verifyAdmin, userController.getAllUser)
+
+
+//RESET PASSWORD
+router.get("/password-reset/:id",verify.verifyResetPasswordToken, userController.resetPassword)
 
 //Default
 router.get("/", userController.index)

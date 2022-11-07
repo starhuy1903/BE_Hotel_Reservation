@@ -1,12 +1,14 @@
 const User = require("../models/user")
-
+const bcrypt = require('bcryptjs')
 class userController{
     index (req,res){
         res.send("Hello from user")
     }
     async updateUser(req, res, next){
         try{
-            const updatedUser = await User.findByIdAndUpdate(req.params.id, {$set: req.body}, {new: true})
+            const salt = bcrypt.genSaltSync(10)
+            const hash = bcrypt.hashSync(req.body.password, salt)
+            const updatedUser = await User.findByIdAndUpdate(req.params.id, {$set: req.body, password: hash}, {new: true})
             res.status(200).json(updatedUser)
         }
         catch(err){
@@ -36,15 +38,24 @@ class userController{
 
     async getAllUser(req, res, next){
 
-        /*const failed = true
-        if(failed) return next(createError(401,"You're not authentic"))*/
-
         try{
             const Users = await User.find()
             res.status(200).json(Users)
         }
         catch(err){
             //res.status(500).json(err)
+            next(err)
+        }
+    }
+
+    async resetPassword(req, res, next){
+        try{
+            const salt = bcrypt.genSaltSync(10)
+            const hash = bcrypt.hashSync(req.body.password, salt)
+            const updatedUser = await User.findByIdAndUpdate(req.params.id, {password: hash}, {new: true})
+            res.status(200).json(updatedUser)
+        }
+        catch(err){
             next(err)
         }
     }
