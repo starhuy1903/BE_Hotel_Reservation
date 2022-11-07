@@ -51,9 +51,6 @@ class roomController{
 
     async getAllRoom(req, res, next){
 
-        /*const failed = true
-        if(failed) return next(createError(401,"You're not authentic"))*/
-
         try{
             const rooms = await Room.find()
             res.status(200).json(rooms)
