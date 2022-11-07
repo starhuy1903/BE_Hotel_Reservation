@@ -2,6 +2,11 @@ const User = require("../models/user")
 const bcrypt = require('bcryptjs')
 const createError = require("../../utils/error")
 const jwt = require("jsonwebtoken")
+
+const sendMail = require('../../utils/mailer')
+const Joi = require('joi');
+const crypto = require('crypto')
+
 class authController{
     index(req,res){
         res.send("Hello from auth")
@@ -44,7 +49,7 @@ class authController{
             next(err)
         }
     }
-    async sendEmail(req, res) {
+    async sendEmail(req, res, next) {
         try {
             const schema = Joi.object({email: Joi.string().email().required()});
             const {error} = schema.validate(req.body);
