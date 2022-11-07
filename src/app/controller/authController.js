@@ -44,6 +44,32 @@ class authController{
             next(err)
         }
     }
+    async sendEmail(req, res) {
+        try {
+            const schema = Joi.object({email: Joi.string().email().required()});
+            const {error} = schema.validate(req.body);
+            if (error) return res.status(400).send(error.details[0].message);
+    
+            const user = await User.findOne({email: req.body.email});
+            if(!user) return next(createError(400,"User Not Found "));
+    
+            
+            const token = jwt.sign({id: user._id, roles: user.roles, createdAt: Date.now(), token: crypto.randomBytes(32).toString('hex')}, process.env.JWT)
+            
+            
+           
+            // mapping links
+            const link = `${process.env.BASE_URL}/password-reset/${user._id}/${token.token}`;
+            // send email
+            await sendMail(user.email, "Password Reset", link);
+            res.status(200).send("Password reset link has been sent to your email");
+    
+    
+        } catch (error) {
+            res.send(error.message);
+            console.log(error);
+        }
+    }
 }
 
 module.exports = new authController
