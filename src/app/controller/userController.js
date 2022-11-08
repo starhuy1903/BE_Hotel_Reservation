@@ -1,5 +1,7 @@
 const User = require("../models/user")
+const verifyToken = require("../models/token")
 const bcrypt = require('bcryptjs')
+const createError = require("../../utils/error")
 class userController{
     index (req,res){
         res.send("Hello from user")
@@ -50,15 +52,50 @@ class userController{
 
     async resetPassword(req, res, next){
         try{
+            const user = await User.findOne({_id: req.params.id})
+            if(!user) return next(createError(400,"Invalid link"))
+            
+            const token = await verifyToken.findOne({
+                user_id: user._id,
+                key: req.params.key
+            })
+           
+            if(!token) return next(createError(400,"Invalid link"))
+
+
             const salt = bcrypt.genSaltSync(10)
             const hash = bcrypt.hashSync(req.body.password, salt)
-            const updatedUser = await User.findByIdAndUpdate(req.params.id, {password: hash}, {new: true})
+            const updatedUser = await User.findByIdAndUpdate(user._id, {password: hash}, {new: true})
+            await token.remove()
+            
             res.status(200).json(updatedUser)
         }
         catch(err){
             next(err)
         }
     }
+    async verifyEmailUser(req, res, next){
+        try{
+            const user = await User.findOne({_id: req.params.id})
+            if(!user) return next(createError(400,"Invalid link"))
+            
+            const token = await verifyToken.findOne({
+                user_id: user._id,
+                key: req.params.key
+            })
+            
+            if(!token) return next(createError(400,"Invalid link"))
+
+            await User.findByIdAndUpdate(req.params.id, {verified: true}, {new: true})
+            await token.remove()
+
+            res.status(200).send("Verify User Email Succesfully")
+        }
+        catch(err){
+            next(err)
+        }
+    }
+
 }
 
 module.exports = new userController

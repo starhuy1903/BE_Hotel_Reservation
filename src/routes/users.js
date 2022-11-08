@@ -30,7 +30,10 @@ router.get("/get",verify.verifyToken, verify.verifyAdmin, userController.getAllU
 
 
 //RESET PASSWORD
-router.get("/password-reset/:id",verify.verifyResetPasswordToken, userController.resetPassword)
+router.get("/password-reset/:id/:key", userController.resetPassword)
+
+//VERIFY EMAIL
+router.get("/verify/:id/:key", userController.verifyEmailUser)
 
 //Default
 router.get("/", userController.index)

@@ -1,4 +1,5 @@
 const User = require("../models/user")
+const verifyToken = require("../models/token")
 const bcrypt = require('bcryptjs')
 const createError = require("../../utils/error")
 const jwt = require("jsonwebtoken")
@@ -6,6 +7,7 @@ const jwt = require("jsonwebtoken")
 const sendMail = require('../../utils/mailer')
 const Joi = require('joi');
 const crypto = require('crypto')
+const user = require("../models/user")
 
 class authController{
     index(req,res){
@@ -24,9 +26,21 @@ class authController{
                 last_name: req.body.last_name,
                 address: req.body.address,
                 phoneNumber: req.body.phoneNumber,
-                isActive: req.body.isActive
+                isActive: req.body.isActive,
+                verified: false
             })
             await newUser.save()
+            const newToken = new verifyToken({
+                user_id: user._id,
+                key: crypto.randomBytes(32).toString("hex")
+            })
+            
+            await newToken.save()
+
+            // mapping links
+            const link = `${process.env.BASE_URL}user/verify/${newUser._id}/${newToken.key}`;
+            // send email
+            await sendMail(newUser.email, "Verify Email", link);
             res.status(201).send("Create new user successfully")
         }
         catch(err){
@@ -42,16 +56,20 @@ class authController{
             const isPasswordCorrect = await bcrypt.compare(req.body.password, user.password)
             if(!isPasswordCorrect) return next(createError(400,"Wrong password or username"))
 
-            const token = jwt.sign({id: user._id, roles: user.roles}, process.env.JWT, {expiresIn: '1d'})
+            const refresh_token = jwt.sign({id: user._id, roles: user.roles}, process.env.JWT, {expiresIn: '300d'})
+            res.cookie("refresh_token", refresh_token,{httpOnly: true})
 
+            const token = jwt.sign({id: user._id, roles: user.roles}, process.env.JWT, {expiresIn: '30s'})
             const {password,roles, ...otherDetails} = user._doc
             res.cookie("access_token", token,{httpOnly: true}).status(200).json({...otherDetails})
+
+            
         }
         catch(err){
             next(err)
         }
     }
-    async sendEmail(req, res, next) {
+    async resetPassword(req, res, next) {
         try {
             const schema = Joi.object({email: Joi.string().email().required()})
             const {error} = schema.validate(req.body)
@@ -59,15 +77,17 @@ class authController{
     
             const user = await User.findOne({email: req.body.email});
             if(!user) return next(createError(400,"User Not Found "));
-    
             
-            const token = jwt.sign({id: user._id}, process.env.JWT, {expiresIn: '1200s'})
-            res.cookie("reset_password_token", token,{httpOnly: true}).status(200)
+            const newToken = new verifyToken({
+                user_id: user._id,
+                key: crypto.randomBytes(32).toString("hex")
+            })
             
-           
+            await newToken.save()
+
             // mapping links
-            const link = `${process.env.BASE_URL}user/password-reset/${user._id}`;
-            //console.log(link)
+            const link = `${process.env.BASE_URL}user/password-reset/${user._id}/${newToken.key}`;
+        
             // send email
             await sendMail(user.email, "Password Reset", link);
             res.status(200).send("Password reset link has been sent to your email");
@@ -76,6 +96,10 @@ class authController{
         } catch (error) {
             next(error)
         }
+    }
+
+    async refreshToken(req, res, next){
+         
     }
 }
 
