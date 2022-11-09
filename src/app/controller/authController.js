@@ -8,6 +8,8 @@ const sendMail = require('../../utils/mailer')
 const Joi = require('joi');
 const crypto = require('crypto')
 const user = require("../models/user")
+const redis = require('../../config/redis')
+
 
 class authController{
     index(req,res){
@@ -56,10 +58,12 @@ class authController{
             const isPasswordCorrect = await bcrypt.compare(req.body.password, user.password)
             if(!isPasswordCorrect) return next(createError(400,"Wrong password or username"))
 
-            const refresh_token = jwt.sign({id: user._id, roles: user.roles}, process.env.JWT, {expiresIn: '300d'})
+            const refresh_token = jwt.sign({id: user._id, roles: user.roles}, process.env.REFRESH_KEY, {expiresIn: '120s'})
+            redis.set(user._id.toString(), refresh_token,"EX",120)
             res.cookie("refresh_token", refresh_token,{httpOnly: true})
+            
 
-            const token = jwt.sign({id: user._id, roles: user.roles}, process.env.JWT, {expiresIn: '30s'})
+            const token = jwt.sign({id: user._id, roles: user.roles}, process.env.ACCESS_KEY, {expiresIn: '30s'})
             const {password,roles, ...otherDetails} = user._doc
             res.cookie("access_token", token,{httpOnly: true}).status(200).json({...otherDetails})
 
@@ -99,7 +103,15 @@ class authController{
     }
 
     async refreshToken(req, res, next){
-         
+         try{
+            const token = jwt.sign({id: req.user.id, roles: req.user.roles}, process.env.ACCESS_KEY, {expiresIn: '30s'})
+            res.cookie("access_token", token,{httpOnly: true})
+            res.status(200).send("Generate new access token successfully")
+         }
+         catch(error) {
+            next(error)
+
+         }
     }
 }
 
