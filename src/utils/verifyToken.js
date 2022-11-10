@@ -18,7 +18,7 @@ function verifyToken(req, res, next){
 }
 
 function verifyRefeshToken(req, res, next){
-    const refresh_token = req.body.refresh_token
+    const refresh_token = req.cookies.refresh_token
     
     if(!refresh_token) return next(createError(401,"You're not authentication"))
 
@@ -33,7 +33,7 @@ function verifyRefeshToken(req, res, next){
                 req.user = user
                 next()
             }
-            return next(createError(403,"You're not authorized")) 
+            else return next(createError(403,"You're not authorized")) 
         })
         
     })

@@ -6,6 +6,7 @@ router.post("/register", authController.register)
 router.post("/login", authController.login)
 router.post("/reset-email", authController.resetPassword)
 router.post("/refresh-token",verify.verifyRefeshToken,authController.refreshToken)
+router.delete("/logout",verify.verifyRefeshToken,authController.logout)
 router.get("/", authController.index)
 
 module.exports = router
