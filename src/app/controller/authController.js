@@ -116,14 +116,15 @@ class authController{
 
     async logout(req, res, next){
         try{
-           res.clearCookie('access_token')
-           /*const refresh_token = req.cookies.refresh_token
-           if(!refresh_token) return next(createError(400, 'Bad Request'))*/
-           res.clearCookie('refresh_token')
-           redis.del(req.user.id.toString(), (err, reply)=>{
-                if(err) return next(createError(500,"Internal Server"))
-                res.status(200).send("Log out")
-           })
+            
+            res.clearCookie('access_token')
+            /*const refresh_token = req.cookies.refresh_token
+            if(!refresh_token) return next(createError(400, 'Bad Request'))*/
+            res.clearCookie('refresh_token')
+            redis.del(req.user.id.toString(), (err, reply)=>{
+                    if(err) return next(createError(500,"Internal Server"))
+                    res.status(200).send("Log out")
+            })
         }
         catch(error) {
            next(error)
