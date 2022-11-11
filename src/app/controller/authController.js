@@ -1,4 +1,4 @@
-const User = require("../models/user")
+const User = require('../models/user')
 const bcrypt = require('bcryptjs')
 const createError = require("../../utils/error")
 const jwt = require("jsonwebtoken")
@@ -19,12 +19,12 @@ class authController{
                 username: req.body.username,
                 password: hash,
                 email: req.body.email,
-                roles: req.body.roles,
-                first_name: req.body.first_name,
-                last_name: req.body.last_name,
-                address: req.body.address,
-                phoneNumber: req.body.phoneNumber,
-                isActive: req.body.isActive
+                //roles: req.body.roles,
+                //first_name: req.body.first_name,
+                //last_name: req.body.last_name,
+                //address: req.body.address,
+                //phoneNumber: req.body.phoneNumber,
+                //isActive: req.body.isActive
             })
 
             await newUser.save()
