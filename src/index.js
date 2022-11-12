@@ -6,6 +6,16 @@ const app = express()
 const db = require("./config/db")
 const route = require("./routes")
 const cookieParser = require("cookie-parser")
+const cors = require('cors')
+
+const whitelist = ['http://localhost:3000', 'http://127.0.0.1:8800', 'http://localhost:8800']
+const corsOptions = {
+    origin: whitelist,
+    optionsSuccessStatus: 200
+}
+
+app.use(cors(corsOptions))
+
 
 db.connect()
 
