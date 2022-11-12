@@ -7,7 +7,8 @@ const db = require("./config/db")
 const route = require("./routes")
 const cookieParser = require("cookie-parser")
 const cors = require('cors')
-
+const credentials = require('./middleware/credentials')
+const corsOptions = require('./config/corsOptions')
 
 
 //static
@@ -22,12 +23,11 @@ const morgan = require('morgan')
 app.use(morgan('combined'))
 
 
-//cors
-const whitelist = ['http://localhost:3000', 'http://127.0.0.1:8800', 'http://localhost:8800']
-const corsOptions = {
-    origin: whitelist,
-    optionsSuccessStatus: 200
-}
+
+
+
+// Cross Origin Resource Sharing
+app.use(credentials);
 app.use(cors(corsOptions))
 
 db.connect()

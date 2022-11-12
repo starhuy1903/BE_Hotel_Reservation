@@ -23,12 +23,12 @@ class authController{
                 username: req.body.username,
                 password: hash,
                 email: req.body.email,
-                roles: req.body.roles,
+                roles: ["user"],
                 first_name: req.body.first_name,
                 last_name: req.body.last_name,
                 address: req.body.address,
                 phoneNumber: req.body.phoneNumber,
-                isActive: req.body.isActive,
+                isActive: true,
                 verified: false
             })
             await newUser.save()

@@ -9,8 +9,8 @@ function verifyToken(req, res, next){
 
     jwt.verify(token, process.env.ACCESS_KEY,(err, user)=>{
         if(err) {
-            if(err.name === "JsonWebTokenError") return next(createError(403, "Token is not valid"))
-            return next(createError(403, err.message))
+            if(err.name === "JsonWebTokenError") return next(createError(401, "Token is not valid"))
+            return next(createError(401, err.message))
         }
         req.user = user
         next()
@@ -24,8 +24,8 @@ function verifyRefeshToken(req, res, next){
 
     jwt.verify(refresh_token, process.env.REFRESH_KEY,(err, user)=>{
         if(err) {
-            if(err.name === "JsonWebTokenError") return next(createError(403,err.message ))
-            return next(createError(403, err.message))
+            if(err.name === "JsonWebTokenError") return next(createError(401,err.message ))
+            return next(createError(401, err.message))
         }
         redis.get(user.id, (err,reply)=>{
             if(err) return next(createError(500, "Internal Sever Error"))
