@@ -58,13 +58,13 @@ class authController{
             const isPasswordCorrect = await bcrypt.compare(req.body.password, user.password)
             if(!isPasswordCorrect) return next(createError(400,"Wrong password or username"))
 
-            const refresh_token = jwt.sign({id: user._id, roles: user.roles}, process.env.REFRESH_KEY, {expiresIn: process.env.REFRESH_EX + 'd'})
-            redis.set(user._id.toString(), refresh_token,"EX",process.env.REFRESH_EX*24*60*60)
-            res.cookie("refresh_token", refresh_token,{httpOnly: true, secure: true})
+            const refreshToken = jwt.sign({id: user._id, roles: user.roles}, process.env.REFRESH_KEY, {expiresIn: process.env.REFRESH_EX + 'd'})
+            redis.set(user._id.toString(), refreshToken,"EX",process.env.REFRESH_EX*24*60*60)
+            res.cookie("refreshToken", refreshToken,{httpOnly: true, secure: true})
             
 
             const token = jwt.sign({id: user._id, roles: user.roles}, process.env.ACCESS_KEY, {expiresIn: process.env.ACCESS_EX})
-            res.cookie("access_token", token,{httpOnly: true, secure: true})
+            res.cookie("accessToken", token,{httpOnly: true, secure: true})
 
             res.status(200).json({
                 'accessToken': token,
@@ -109,7 +109,7 @@ class authController{
     async refreshToken(req, res, next){
          try{
             const token = jwt.sign({id: req.user.id, roles: req.user.roles}, process.env.ACCESS_KEY, {expiresIn: ACCESS_EX})
-            res.cookie("access_token", token,{httpOnly: true, secure: true})
+            res.cookie("accessToken", token,{httpOnly: true, secure: true})
             res.status(200).send("Generate new access token successfully")
          }
          catch(error) {
@@ -121,10 +121,10 @@ class authController{
     async logout(req, res, next){
         try{
             
-            res.clearCookie('access_token')
-            /*const refresh_token = req.cookies.refresh_token
-            if(!refresh_token) return next(createError(400, 'Bad Request'))*/
-            res.clearCookie('refresh_token')
+            res.clearCookie('accessToken')
+            /*const refreshToken = req.cookies.refreshToken
+            if(!refreshToken) return next(createError(400, 'Bad Request'))*/
+            res.clearCookie('refreshToken')
             redis.del(req.user.id.toString(), (err, reply)=>{
                     if(err) return next(createError(500,"Internal Server"))
                     res.status(200).send("Log out")
