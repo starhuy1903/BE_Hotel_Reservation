@@ -64,8 +64,12 @@ class authController{
             
 
             const token = jwt.sign({id: user._id, roles: user.roles}, process.env.ACCESS_KEY, {expiresIn: process.env.ACCESS_EX})
-            const {password,roles, ...otherDetails} = user._doc
-            res.cookie("access_token", token,{httpOnly: true, secure: true}).status(200).json({...otherDetails})
+            res.cookie("access_token", token,{httpOnly: true, secure: true})
+
+            res.status(200).json({
+                'accessToken': token,
+                'role': user.roles
+            })
 
             
         }
