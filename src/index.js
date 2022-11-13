@@ -23,9 +23,6 @@ const morgan = require('morgan')
 app.use(morgan('combined'))
 
 
-
-
-
 // Cross Origin Resource Sharing
 app.use(credentials);
 app.use(cors(corsOptions))

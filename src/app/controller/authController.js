@@ -58,17 +58,21 @@ class authController{
             const isPasswordCorrect = await bcrypt.compare(req.body.password, user.password)
             if(!isPasswordCorrect) return next(createError(400,"Wrong password or username"))
 
-            const refreshToken = jwt.sign({id: user._id, roles: user.roles}, process.env.REFRESH_KEY, {expiresIn: process.env.REFRESH_EX + 'd'})
-            redis.set(user._id.toString(), refreshToken,"EX",process.env.REFRESH_EX*24*60*60)
+            if(user.verified === false) return next(createError(400,"User is not verified"))
+
+
+            const roles = Object.values(user.roles).filter(Boolean)
+
+            const refreshToken = jwt.sign({id: user._id, roles: user.roles}, process.env.REFRESH_TOKEN_SECRET, {expiresIn: process.env.REFRESH_EXPIRE + 'd'})
+            redis.set(user._id.toString(), refreshToken,"EX",process.env.REFRESH_EXPIRE*24*60*60)
             res.cookie("refreshToken", refreshToken,{httpOnly: true, secure: true})
             
 
-            const token = jwt.sign({id: user._id, roles: user.roles}, process.env.ACCESS_KEY, {expiresIn: process.env.ACCESS_EX})
+            const token = jwt.sign({id: user._id, roles: user.roles}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: process.env.ACCESS_EXPIRE})
             res.cookie("accessToken", token,{httpOnly: true, secure: true})
 
             res.status(200).json({
-                'accessToken': token,
-                'role': user.roles
+                'accessToken': token
             })
 
             
@@ -77,7 +81,7 @@ class authController{
             next(err)
         }
     }
-    async resetPassword(req, res, next) {
+    async sendEmailResetPassword(req, res, next) {
         try {
             const schema = Joi.object({email: Joi.string().email().required()})
             const {error} = schema.validate(req.body)
@@ -108,7 +112,7 @@ class authController{
 
     async refreshToken(req, res, next){
          try{
-            const token = jwt.sign({id: req.user.id, roles: req.user.roles}, process.env.ACCESS_KEY, {expiresIn: ACCESS_EX})
+            const token = jwt.sign({id: req.user.id, roles: req.user.roles}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: process.env.ACCESS_EXPIRE})
             res.cookie("accessToken", token,{httpOnly: true, secure: true})
             res.status(200).send("Generate new access token successfully")
          }
