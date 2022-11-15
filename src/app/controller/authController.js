@@ -10,6 +10,8 @@ const crypto = require('crypto')
 const user = require("../models/user")
 const redis = require('../../config/redis')
 
+const ROLES_LIST = require("../../config/allowedRoles")
+
 
 class authController{
     index(req,res){
@@ -23,7 +25,7 @@ class authController{
                 username: req.body.username,
                 password: hash,
                 email: req.body.email,
-                roles: ["user"],
+                roles: [ROLES_LIST.User],
                 first_name: req.body.firstName,
                 last_name: req.body.lastName,
                 address: req.body.address,
@@ -61,7 +63,8 @@ class authController{
             if(user.verified === false) return next(createError(400,"User is not verified"))
 
 
-            const roles = Object.values(user.roles).filter(Boolean)
+            //const roles = Object.values(user.roles).filter(Boolean)
+            //console.log(Object.values(user.roles))
 
             const refreshToken = jwt.sign({id: user._id, roles: user.roles}, process.env.REFRESH_TOKEN_SECRET, {expiresIn: process.env.REFRESH_EXPIRE + 'd'})
             redis.set(user._id.toString(), refreshToken,"EX",process.env.REFRESH_EXPIRE*24*60*60)

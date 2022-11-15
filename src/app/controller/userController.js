@@ -2,7 +2,7 @@ const User = require("../models/user")
 const verifyToken = require("../models/token")
 const bcrypt = require('bcryptjs')
 const createError = require("../../utils/error")
-
+const ROLES_LIST = require("../../config/allowedRoles")
 
 class userController{
     index (req,res){
@@ -13,11 +13,18 @@ class userController{
         try{
             const salt = bcrypt.genSaltSync(10)
             const hash = bcrypt.hashSync(req.body.password, salt)
+            let roles = []
+            for(let role of req.body.roles){
+                for(let key in ROLES_LIST){
+                    if(role === key) roles.push(ROLES_LIST[key])
+                }
+            }
+
             const newUser = new User({
                 username: req.body.username,
                 password: hash,
                 email: req.body.email,
-                roles: req.body.roles,
+                roles: roles,
                 first_name: req.body.firstName,
                 last_name: req.body.lastName,
                 address: req.body.address,
