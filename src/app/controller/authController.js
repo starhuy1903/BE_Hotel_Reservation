@@ -19,6 +19,30 @@ class authController{
     }
     async register(req, res, next){
         try {
+            //VALIDATE
+            const schema = Joi.object({
+                email: Joi.string().email().required(),
+                username: Joi.string()
+                    .alphanum()
+                    .min(1)
+                    .max(30)
+                    .required(),
+                password: Joi.string().required(),
+                repeatPassword: Joi.ref('password'),
+                phoneNumber: Joi.number().required(),
+                firstName: Joi.string().required(),
+                lastName: Joi.string().required(),
+            })
+            const {error} = schema.validate(req.body)
+            if(error) return next(error)
+
+            if(await User.findOne({username: req.body.username})){
+                return next(createError(500,"Username is duplicated"))
+            }
+            if(await User.findOne({email: req.body.email})){
+                return next(createError(500,"Email is duplicated"))
+            }
+
             const salt = bcrypt.genSaltSync(10)
             const hash = bcrypt.hashSync(req.body.password, salt)
             const newUser = new User({
@@ -54,6 +78,13 @@ class authController{
 
     async login(req, res, next){
         try {
+            if(!req.body.username){
+                return next(createError(500,"Username is required"))
+            }
+            if(!req.body.password){
+                return next(createError(500,"Password is required"))
+            }
+
             const user = await User.findOne({username: req.body.username})
             if(!user) return next(createError(404,"Username Not Found "))
 
