@@ -2,10 +2,20 @@ const User = require('../models/user')
 const bcrypt = require('bcryptjs')
 const createError = require("../../utils/error")
 const jwt = require("jsonwebtoken")
+<<<<<<< HEAD
 
 const sendMail = require('../../utils/mailer')
 const Joi = require('joi');
 const crypto = require('crypto')
+=======
+const passwordReset = require("../routes/passwordReset");
+const connection = require("../config/db");
+
+app.use(express.json());
+//  Can phai chinh qua BODY -> raw -> text chuyen thanh JSON
+// SET UP MAIL MAC DINH TRONG FILE .ENV 
+app.use("/api/password-reset", passwordReset);
+>>>>>>> 2a38c61 (Add API)
 
 class authController{
     index(req,res){
