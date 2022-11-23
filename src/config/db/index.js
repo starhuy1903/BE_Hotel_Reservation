@@ -18,4 +18,4 @@ mongoose.connection.on("disconnected", ()=>{
 mongoose.connection.on("connected", ()=>{
     console.log("MongoDB Connected")
 })
- module.exports = {connect}
+module.exports = {connect}

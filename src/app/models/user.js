@@ -11,8 +11,9 @@ const userSchema = new Schema({
   email: {type: String, require: true, unique: true},
   phoneNumber: {type: String},
   address: {type: String},
-  roles: {type: [String]},
-  isActive: {type: Boolean}
+  roles: {type: [String], default: ["user"]},
+  isActive: {type: Boolean},
+  verified: {type: Boolean}
 },{timestamps: true});
 
 

@@ -1,37 +1,32 @@
 const express = require('express')
 const router = express.Router()
 const userController = require("../app/controller/userController")
-const verify = require("../utils/verifyToken")
-const {validate} = require("../app/models/user")
+const verify = require("../middleware/verifyToken")
+
+const verifyRoles =  require("../middleware/verifyRoles")
+const ROLES_LIST = require("../config/allowedRoles")
 
 
-/*router.get("/checkAuthentication", verify.verifyToken, (req, res, next)=>{
-    res.send("Hello user, you're logged in")
-})
-
-router.get("/checkuser/:id", verify.verifyUser, (req, res, next)=>{
-    res.send("Hello user, you're logged in and you can delete your account")
-})*/
-
-/*router.get("/checkAdmin/:id", verify.verifyAdmin, (req, res, next)=>{
-    res.send("Hello admin, you're logged in and you can delete all accounts")
-})*/
+//CREATE
+router.post("/create", verifyRoles(ROLES_LIST.Admin), userController.createUser)
 
 //UPDATE
-router.put("/update/:id", verify.verifyToken, verify.verifyUser, userController.updateUser)
+router.put("/update/:id", verifyRoles(ROLES_LIST.User, ROLES_LIST.Admin), userController.updateUser)
 
 //DELETE
-router.delete("/:id",verify.verifyToken,verify.verifyUser, userController.deleteUser)
+router.delete("/:id", verifyRoles(ROLES_LIST.User, ROLES_LIST.Admin), userController.deleteUser)
 
 //GET
-router.get("/get/:id",verify.verifyToken, verify.verifyUser, userController.getUser)
+router.get("/get/:id", verifyRoles(ROLES_LIST.User, ROLES_LIST.Admin), userController.getUser)
 
 //GETALL
-router.get("/get",verify.verifyToken, verify.verifyAdmin, userController.getAllUser)
-
+router.get("/get", verifyRoles(ROLES_LIST.Admin), userController.getAllUser)
 
 //RESET PASSWORD
-router.get("/password-reset/:id",verify.verifyResetPasswordToken, userController.resetPassword)
+router.get("/reset-password/:id/:key", userController.resetPassword)
+
+//VERIFY EMAIL
+router.get("/verify/:id/:key", userController.verifyEmailUser)
 
 //Default
 router.get("/", userController.index)

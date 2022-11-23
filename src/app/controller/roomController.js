@@ -8,7 +8,7 @@ class roomController{
     index (req,res){
         res.send("Hello from room")
     }
-    async createRoom(req, res){
+    async createRoom(req, res, next){
         
         const newroom = new Room(req.body)
         try{
@@ -19,7 +19,7 @@ class roomController{
             next(err)
         }
     }
-    async updateRoom(req, res){
+    async updateRoom(req, res, next){
         try{
             const updatedRoom = await Room.findByIdAndUpdate(req.params.id, {$set: req.body}, {new: true})
             res.status(200).json(updatedRoom)
@@ -29,7 +29,7 @@ class roomController{
         }
     }
 
-    async deleteRoom(req, res){
+    async deleteRoom(req, res, next){
         try{
             const deletedRoom = await Room.findByIdAndDelete(req.params.id)
             res.status(200).json("room has been deleted")
@@ -39,7 +39,7 @@ class roomController{
         }
     }
 
-    async getRoom(req, res){
+    async getRoom(req, res, next){
         try{
             const room = await Room.findById(req.params.id)
             res.status(200).json(room)
@@ -51,9 +51,6 @@ class roomController{
 
     async getAllRoom(req, res, next){
 
-        /*const failed = true
-        if(failed) return next(createError(401,"You're not authentic"))*/
-
         try{
             const rooms = await Room.find()
             res.status(200).json(rooms)
@@ -63,7 +60,31 @@ class roomController{
             next(err)
         }
     }
+
+    async getRoomByCity(req, res, next){
+        try{
+            const hotelId = await Room.aggregate([
+                {
+                    $match:{
+                        "current_price": 120000
+                    }
+                },
+                {
+                    $group:{
+                        _id: "$hotel_id"
+                    }
+                }
+            ])
+            //console.log(hotelId)
+            //res.status(200).json(hotelId)
+            
+        }
+        catch(err){
+            next(err)
+        }
+    }
 }
+    
 
 
 module.exports = new roomController

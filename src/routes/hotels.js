@@ -1,15 +1,19 @@
 const express = require('express')
 const router = express.Router()
 const hotelController = require("../app/controller/hotelController")
-const verify = require("../utils/verifyToken")
+const verify = require("../middleware/verifyToken")
+
+const verifyRoles =  require("../middleware/verifyRoles")
+const ROLES_LIST = require("../config/allowedRoles")
+
 //CREATE
 router.post("/create", hotelController.createHotel)
 
 //UPDATE
-router.put("/update/:id", verify.verifyToken, verify.verifyAdmin, hotelController.updateHotel)
+router.put("/update/:id", verifyRoles(ROLES_LIST.Admin), hotelController.updateHotel)
 
 //DELETE
-router.delete("/:id", verify.verifyToken, verify.verifyAdmin, hotelController.deleteHotel)
+router.delete("/:id", verifyRoles(ROLES_LIST.Admin), hotelController.deleteHotel)
 
 //GET
 router.get("/get/:id", hotelController.getHotel)
