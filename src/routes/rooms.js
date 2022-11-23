@@ -21,6 +21,11 @@ router.get("/get/:id", roomController.getRoom)
 //GETALL
 router.get("/get", roomController.getAllRoom)
 
+
+//FIND ROOM BY CITY
+router.get("/getRoomByCity", verifyRoles(ROLES_LIST.Admin, ROLES_LIST.User), roomController.getRoomByCity)
+
+
 router.get("/", roomController.index)
 
 module.exports = router
