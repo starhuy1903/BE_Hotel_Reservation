@@ -11,26 +11,26 @@ const userSchema = new Schema({
   email: {type: String, require: true, unique: true},
   phoneNumber: {type: String},
   address: {type: String},
-  roles: {type: [String], default: ["user"]},
-  isActive: {type: Boolean},
+  roles: {type: [String]},
+  isActive: {type: Boolean}
   verified: {type: Boolean}
 },{timestamps: true});
 
 
-const validate = (user) => {
-  const schema = {
-    username: Joi.string().required(),
-    password: Joi.string().required(),
-    first_name: Joi.string().required(),
-    last_name: Joi.string().required(),
-    email: Joi.string().email().required(),
-    phoneNumber: Joi.string(),
-    address: Joi.string(),
-    roles: Joi.array().items(Joi.string()),
-    isActive: Joi.boolean()
-  }
-  return Joi.validate(user, schema);
-}
+// const validate = (user) => {
+//   const schema = {
+//     username: Joi.string().required(),
+//     password: Joi.string().required(),
+//     //first_name: Joi.string().required(),
+//     //last_name: Joi.string().required(),
+//     email: Joi.string().email().required(),
+//     //phoneNumber: Joi.string(),
+//     //address: Joi.string(),
+//     //roles: Joi.array().items(Joi.string()),
+//     //isActive: Joi.boolean()
+//   }
+//   return Joi.validate(user, schema);
+// }
 
 module.exports = mongoose.model('User', userSchema);
-module.exports = {validate};
+// module.exports = {validate};
