@@ -12,7 +12,7 @@ const userSchema = new Schema({
   phoneNumber: {type: String},
   address: {type: String},
   roles: {type: [String]},
-  isActive: {type: Boolean}
+  isActive: {type: Boolean},
   verified: {type: Boolean}
 },{timestamps: true});
 
