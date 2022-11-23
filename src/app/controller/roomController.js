@@ -63,7 +63,20 @@ class roomController{
 
     async getRoomByCity(req, res, next){
         try{
-            
+            const hotelId = await Room.aggregate([
+                {
+                    $match:{
+                        "current_price": 120000
+                    }
+                },
+                {
+                    $group:{
+                        _id: "$hotel_id"
+                    }
+                }
+            ])
+            //console.log(hotelId)
+            //res.status(200).json(hotelId)
             
         }
         catch(err){
