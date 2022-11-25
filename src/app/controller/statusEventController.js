@@ -1,27 +1,27 @@
 //const { createError } = require('../../utils/error')
 
 const Hotel = require('../models/hotel')
-const Reservation = require('../models/reservation.js')
+const ReservationEvent = require('../models/reservationStatusEvent')
 const createError = require("../../utils/error")
 
 class reservationController {
     index(req, res) {
-        res.send("Hello from reservation")
+        res.send("Hello from room")
     }
-    async createReservation(req, res, next) {
+    async createReservationStatusEvent(req, res, next) {
 
-        const newReservation = new Reservation(req.body)
+        const newReservationEvent = new ReservationEvent(req.body)
         try {
-            const savedReservation = await new Reservation.save()
-            res.status(200).json(savedReservation)
+            const savedReservationEvent = await new ReservationEvent.save()
+            res.status(200).json(savedReservationEvent)
         } catch (err) {
             next(err)
         }
     }
     async updateReservation(req, res, next) {
         try {
-            const updatedReservation = await Reservation.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true })
-            res.status(200).json(updatedReservation)
+            const updatedReservationEvent = await ReservationEvent.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true })
+            res.status(200).json(updatedReservationEvent)
         } catch (err) {
             next(err)
         }
@@ -29,7 +29,7 @@ class reservationController {
 
     async deleteReservation(req, res, next) {
         try {
-            const deletedReservation = await Reservation.findByIdAndDelete(req.params.id)
+            const deletedReservationEvent = await ReservationEvent.findByIdAndDelete(req.params.id)
             res.status(200).json("reservation has been deleted")
         } catch (err) {
             next(err)
@@ -38,7 +38,7 @@ class reservationController {
 
     async getReservation(req, res, next) {
         try {
-            const reservation = await Reservation.findById(req.params.id)
+            const reservation = await ReservationEvent.findById(req.params.id)
             res.status(200).json(reservation)
         } catch (err) {
             next(err)
@@ -48,8 +48,8 @@ class reservationController {
     async getAllReservation(req, res, next) {
 
         try {
-            const reservations = await Reservation.find()
-            res.status(200).json(reservations)
+            const reservationEvents = await ReservationEvent.find()
+            res.status(200).json(reservationsEvents)
         } catch (err) {
             //res.status(500).json(err)
             next(err)
@@ -58,7 +58,7 @@ class reservationController {
 
     async getReservationByCity(req, res, next) {
         try {
-            const hotelId = await Reservation.aggregate([{
+            const hotelId = await ReservationEvent.aggregate([{
                         $match: {
                             "current_price": 120000
                         }
@@ -80,4 +80,4 @@ class reservationController {
 
 
 
-module.exports = new reservationController
+module.exports = new reservationStatusEventController
