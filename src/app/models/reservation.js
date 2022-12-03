@@ -3,14 +3,14 @@ const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
 const reservationSchema = new Schema({
-    user_id: {type: Schema.ObjectId, require: true},
-    start_date: {type: Date, require: true},
-    end_date: {type: Date, require: true},
-    ts_created: {type: Date, require: true},
-    ts_updated: {type: Date, require: true},
-    discount_percent: {type: Double, require: true},
-    total_price: {type: Double, require: true},
+    userId: { type: Schema.ObjectId, require: true },
+    startDate: { type: Date, require: true },
+    endDate: { type: Date, require: true },
+    //tsCreated: { type: Date, require: true },
+    //tsUpdated: { type: Date, require: true },
+    discountPercent: { type: Number, require: true },
+    totalPrice: { type: Number, require: true },
 
-}, {timestamps: true});
+}, { timestamps: true });
 
-model.exports = mongoose.model('Reservation', reservationSchema)
+module.exports = mongoose.model('Reservation', reservationSchema)

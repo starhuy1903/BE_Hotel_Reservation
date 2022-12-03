@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs')
 const createError = require("../../utils/error")
 const ROLES_LIST = require("../../config/allowedRoles")
 
-class userController{
+class UserController{
     index (req,res){
         res.send("Hello from user")
     }
@@ -131,4 +131,4 @@ class userController{
 
 }
 
-module.exports = new userController
+module.exports = new UserController

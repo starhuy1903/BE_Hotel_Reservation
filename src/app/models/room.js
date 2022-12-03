@@ -9,9 +9,10 @@ const roomSchema = new Schema({
   floor: {type: Number, require: true},
   assets: {},
   room_type_id: {type: Schema.ObjectId, require: true},
-  hotel_id: {type: Schema.ObjectId, require: true},
+  hotel_id: {type: Schema.ObjectId, require: true, ref: 'Hotel'},
   photos: {type: [String]},
   description: {type: String, default: false},
+  maxPeople: {type: Number, require: true}
  
 },{timestamps: true});
 

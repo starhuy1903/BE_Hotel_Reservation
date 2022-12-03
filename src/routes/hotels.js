@@ -24,6 +24,8 @@ router.get("/get", hotelController.getAllHotel)
 router.get("/countByCity", hotelController.countByCity)
 router.get("/countByType", hotelController.countByType)
 
+
+router.get("/filter", hotelController.filterHotel)
 //Default
 router.get("/", hotelController.index)
 

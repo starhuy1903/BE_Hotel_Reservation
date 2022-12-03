@@ -12,7 +12,7 @@ const redis = require('../../config/redis')
 const ROLES_LIST = require("../../config/allowedRoles")
 
 
-class authController{
+class AuthController{
     index(req,res){
         res.send("Hello from auth")
     }
@@ -176,4 +176,5 @@ class authController{
 
 }
 
-module.exports = new authController
+module.exports = new AuthController
+

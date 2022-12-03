@@ -23,7 +23,8 @@ router.get("/get", roomController.getAllRoom)
 
 
 //FIND ROOM BY CITY
-router.get("/getRoomByCity", verifyRoles(ROLES_LIST.Admin, ROLES_LIST.User), roomController.getRoomByCity)
+//router.get("/getRoomByCity", verifyRoles(ROLES_LIST.Admin, ROLES_LIST.User), roomController.getRoomByCity)
+router.get("/filter", roomController.filterRoom)
 
 
 router.get("/", roomController.index)
