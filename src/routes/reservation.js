@@ -7,16 +7,16 @@ const verifyRoles = require("../middleware/verifyRoles")
 const ROLES_LIST = require("../config/allowedRoles")
 
 //CREATE
-router.post("/create/:ReservationId", reservationController.createReservation)
+router.post("/create/", reservationController.createReservation)
 
 //UPDATE
-router.put("/update/:ReservationId", verifyRoles(ROLES_LIST.Admin), reservationController.updateReservation)
+router.put("/update/:id", verifyRoles(ROLES_LIST.Admin), reservationController.updateReservation)
 
 //DELETE
-router.delete("/:id/:ReservationId", verifyRoles(ROLES_LIST.Admin), reservationController.deleteReservation)
+router.delete("/:id", verifyRoles(ROLES_LIST.Admin), reservationController.deleteReservation)
 
 //GET
-router.get("/get/:ReservationId", reservationController.getReservation)
+router.get("/get/:id", reservationController.getReservation)
 
 //GETALL
 router.get("/get", reservationController.getAllReservation)

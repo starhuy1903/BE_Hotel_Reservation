@@ -1,9 +1,12 @@
 //const { createError } = require('../../utils/error')
 
 const Hotel = require('../models/hotel')
+const Room = require('../models/room')
+const Category = require("../models/category")
 const createError = require("../../utils/error")
-
-class hotelController{
+const {findRoomServed} = require("../service/room")
+const {pagination} = require("../service/site")
+class HotelController{
     index (req,res){
         res.send("Hello from hotel")
     }
@@ -77,9 +80,17 @@ class hotelController{
 
     async countByType(req, res, next){
         try{
-            const types = req.query.types.split(",")
-            const list = await Promise.all(types.map(type=>{
-                return Hotel.countDocuments({type: type})
+            const categoryName = req.query.category.split(",")
+            const categories = await Promise.all(categoryName.map(category => {
+                return Category.findOne({
+                    category_name: category
+                })
+            }))
+            const list = await Promise.all(categories.map(category=>{
+                if(category)
+                    return Hotel.countDocuments({category_id: category._id})
+                else
+                    return 0
             }))
             res.status(200).json(list)
         }
@@ -89,6 +100,66 @@ class hotelController{
         }
     }
 
+    async filterHotel(req, res, next){
+        try{
+            const {maxPrice,minPrice,startDate,endDate, ...others} = req.query
+            const numPeople = req.query.numPeople || -1
+            const column = req.query.column || "name"
+            const sort = req.query.sort || 1
+            const page = req.query.page || 1
+
+            //FIND ROOM SERVED
+            const roomServeds = await findRoomServed(startDate, endDate)
+           
+            //PARSE ROOMSERVED ID
+            const roomServedsId = roomServeds.map((roomServed)=>{
+                return roomServed.roomId.toString()
+            })
+
+            //FIND AVAILABLE ROOM
+            const availableRooms = (await Room.find({})).filter((room)=>{
+                return (!roomServedsId.includes(room._id.toString()))
+            })
+
+            const groupBy = (x,f)=>x.reduce((a,b,i)=>((a[f(b,i,x)]||=[]).push(b),a),{})
+
+            //FIND AVAILABLE HOTEL ID
+            const groupByHotels = groupBy(availableRooms, (v)=> v.hotel_id)
+            const availableHotelsId = []
+            for(let hotel in groupByHotels){
+                let maxPeople = 0
+                for(let room of groupByHotels[hotel]){
+                    console.log(room)
+                    maxPeople+=room.maxPeople
+                }
+                if(maxPeople > numPeople){
+                    availableHotelsId.push(hotel)
+                }
+            }
+
+            
+            //FIND AVAILABLE HOTEL
+            const availableHotels = (await Hotel.find({
+                ...req.query,
+                cheapest_price: { $gt: minPrice | 1, $lt: maxPrice || 99999999999 },
+            }).sort({[column]: sort})).filter(hotel =>{
+                return availableHotelsId.includes(hotel._id.toString())
+            })
+
+            //PAGINATION
+            const availablePage = Math.ceil(availableHotels.length/process.env.PER_PAGE)
+            if(page>availablePage && availableHotels.length!==0){
+                return next(createError(404,"Not Found"))
+            }
+            const hotels = pagination(availableHotels, page)
+            res.status(200).json(availableHotels)
+        }
+        catch(err){
+            //res.status(500).json(err)
+            next(err)
+        }
+    }
+
 }
 
-module.exports = new hotelController
+module.exports = new HotelController

@@ -1,18 +1,18 @@
 //const { createError } = require('../../utils/error')
 
-const Hotel = require('../models/hotel')
-const Reservation = require('../models/reservation.js')
+const Reservation = require('../models/reservation')
 const createError = require("../../utils/error")
 
-class reservationController {
+class ReservationController {
     index(req, res) {
         res.send("Hello from reservation")
     }
     async createReservation(req, res, next) {
 
         const newReservation = new Reservation(req.body)
+        console.log(newReservation)
         try {
-            const savedReservation = await new Reservation.save()
+            const savedReservation = await newReservation.save()
             res.status(200).json(savedReservation)
         } catch (err) {
             next(err)
@@ -56,28 +56,8 @@ class reservationController {
         }
     }
 
-    async getReservationByCity(req, res, next) {
-        try {
-            const hotelId = await Reservation.aggregate([{
-                        $match: {
-                            "current_price": 120000
-                        }
-                    },
-                    {
-                        $group: {
-                            _id: "$hotel_id"
-                        }
-                    }
-                ])
-                //console.log(hotelId)
-                //res.status(200).json(hotelId)
-
-        } catch (err) {
-            next(err)
-        }
-    }
 }
 
 
 
-module.exports = new reservationController
+module.exports = new ReservationController
