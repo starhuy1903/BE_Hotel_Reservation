@@ -165,7 +165,7 @@ class AuthController{
             res.clearCookie('refreshToken')
             redis.del(req.user.id.toString(), (err, reply)=>{
                     if(err) return next(createError(500,"Internal Server"))
-                    res.status(200).send("Log out")
+                    res.status(200).json({"message":"Log out"})
             })
         }
         catch(error) {

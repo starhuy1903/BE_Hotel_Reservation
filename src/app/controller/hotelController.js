@@ -23,6 +23,7 @@ class HotelController{
     async updateHotel(req, res, next){
         try{
             const updatedHotel = await Hotel.findByIdAndUpdate(req.params.id, {$set: req.body}, {new: true})
+            if(updatedHotel === null) return next(createError(404, "Not Found"))
             res.status(200).json(updatedHotel)
         }
         catch(err){
@@ -33,6 +34,7 @@ class HotelController{
     async deleteHotel(req, res, next){
         try{
             const deletedHotel = await Hotel.findByIdAndDelete(req.params.id)
+            if(deletedHotel === null) return next(createError(404, "Not Found"))
             res.status(200).json("Hotel has been deleted")
         }
         catch(err){
@@ -42,7 +44,9 @@ class HotelController{
 
     async getHotel(req, res, next){
         try{
+            
             const hotel = await Hotel.findById(req.params.id)
+            if(hotel === null) return next(createError(404, "Not Found"))
             res.status(200).json(hotel)
         }
         catch(err){
@@ -52,12 +56,22 @@ class HotelController{
 
     async getAllHotel(req, res, next){
 
-        /*const failed = true
-        if(failed) return next(createError(401,"You're not authentic"))*/
-
         try{
-            const hotels = await Hotel.find()
-            res.status(200).json(hotels)
+            const {maxPrice,minPrice, ...others} = req.query
+            const column = req.query.column || "name"
+            const sort = req.query.sort || 1
+            const page = req.query.page || 1
+
+            const availableHotels = (await Hotel.find({
+                ...others,
+                cheapest_price: { $gt: minPrice | 1, $lt: maxPrice || 99999999999 },
+            }).sort({[column]: sort}))
+            const availablePage = Math.ceil(availableHotels.length/process.env.PER_PAGE)
+            if(page>availablePage && availableHotels.length!==0){
+                return next(createError(404,"Not Found"))
+            }
+            const hotels = pagination(availableHotels, page)
+            res.status(200).json({"hotels": hotels, "availablePage": availablePage})
         }
         catch(err){
             //res.status(500).json(err)
@@ -152,10 +166,23 @@ class HotelController{
                 return next(createError(404,"Not Found"))
             }
             const hotels = pagination(availableHotels, page)
-            res.status(200).json(availableHotels)
+            res.status(200).json(hotels)
         }
         catch(err){
             //res.status(500).json(err)
+            next(err)
+        }
+    }
+    async getHotelByHotelOwner(req, res, next){
+        try{
+            const userId = req?.user?.id
+            if(!userId) return next(createError(403,"You're not authorized"))
+            const hotels = await Hotel.find({
+                owner_id: userId
+            })
+            res.status(200).json(hotels)
+        }
+        catch(err){
             next(err)
         }
     }
