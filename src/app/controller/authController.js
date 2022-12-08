@@ -1,5 +1,4 @@
-const User = require("../models/user")
-const verifyToken = require("../models/token")
+const User = require('../models/user')
 const bcrypt = require('bcryptjs')
 const createError = require("../../utils/error")
 const jwt = require("jsonwebtoken")
@@ -57,6 +56,7 @@ class AuthController{
                 isActive: true,
                 verified: false
             })
+
             await newUser.save()
             const newToken = new verifyToken({
                 user_id: user._id,
@@ -177,3 +177,4 @@ class AuthController{
 }
 
 module.exports = new AuthController
+
