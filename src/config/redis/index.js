@@ -29,9 +29,9 @@ const Redis = require('ioredis');
 const fs = require('fs');
 
 const redis = new Redis({
-    host: 'redis-13812.c1.asia-northeast1-1.gce.cloud.redislabs.com',
-    port: 13812,
-    password: 'l5udKXXd0MBuVgMRDgvclkMxK1FjvGXC'
+    host: process.env.REDIS_HOST,
+    port: process.env.REDIS_PORT,
+    password: process.env.REDIS_PASSWORD
 });
 
 

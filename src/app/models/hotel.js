@@ -10,7 +10,8 @@ const hotelSchema = new Schema({
   description: {type: String, require: true},
   phone_number: {type: String},
   cheapest_price: {type: Number, require: true},
-  category_id: {type: ObjectId}
+  category_id: {type: ObjectId,require: true},
+  owner_id: {type: ObjectId,require: true},
 });
 
 module.exports = mongoose.model('Hotel', hotelSchema)

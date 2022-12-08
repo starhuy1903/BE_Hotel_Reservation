@@ -7,6 +7,6 @@ const reservationStatusEventSchema = new Schema({
     reservationStatusCatalogId: { type: Schema.ObjectId, require: true },
     details: { type: String, require: true },
     //tsCreated: { type: Date, require: true },
-}, { timestamps: true });
+}, { timestamps: true })
 
 module.exports = mongoose.model('ReservationStatusEvent', reservationStatusEventSchema)
