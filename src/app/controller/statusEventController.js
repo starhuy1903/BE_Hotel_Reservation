@@ -2,7 +2,7 @@
 
 const ReservationEvent = require('../models/reservationStatusEvent')
 const createError = require("../../utils/error")
-
+const {updateSuccessReservation, updatePendingReservation} = require("../service/reservationStatus")
 class ReservationEventController {
     index(req, res) {
         res.send("Hello from room")
@@ -48,6 +48,28 @@ class ReservationEventController {
 
         try {
             const reservationEvents = await ReservationEvent.find()
+            res.status(200).json(reservationEvents)
+        } catch (err) {
+            //res.status(500).json(err)
+            next(err)
+        }
+    }
+
+    async updateSuccessReservation(req, res, next) {
+
+        try {
+            const reservationEvents = await updateSuccessReservation()
+            res.status(200).json(reservationEvents)
+        } catch (err) {
+            //res.status(500).json(err)
+            next(err)
+        }
+    }
+
+    async updatePendingReservation(req, res, next) {
+
+        try {
+            const reservationEvents = await updatePendingReservation()
             res.status(200).json(reservationEvents)
         } catch (err) {
             //res.status(500).json(err)

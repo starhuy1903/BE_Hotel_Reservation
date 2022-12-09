@@ -21,6 +21,9 @@ router.get("/get/:id", statusEventController.getReservationStatusEvent)
 //GETALL
 router.get("/get", statusEventController.getAllReservationStatusEvent)
 
+//SUCESS
+router.get("/getSuccess", statusEventController.updateSuccessReservation)
+router.get("/getPending", statusEventController.updatePendingReservation)
 
 router.get("/", statusEventController.index)
 

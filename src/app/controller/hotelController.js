@@ -154,7 +154,7 @@ class HotelController{
             
             //FIND AVAILABLE HOTEL
             const availableHotels = (await Hotel.find({
-                ...req.query,
+                ...others,
                 cheapest_price: { $gt: minPrice | 1, $lt: maxPrice || 99999999999 },
             }).sort({[column]: sort})).filter(hotel =>{
                 return availableHotelsId.includes(hotel._id.toString())
@@ -166,7 +166,7 @@ class HotelController{
                 return next(createError(404,"Not Found"))
             }
             const hotels = pagination(availableHotels, page)
-            res.status(200).json(hotels)
+            res.status(200).json({"hotels": hotels, "availablePage": availablePage})
         }
         catch(err){
             //res.status(500).json(err)
