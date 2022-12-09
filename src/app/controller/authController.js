@@ -1,5 +1,4 @@
-const User = require("../models/user")
-const verifyToken = require("../models/token")
+const User = require('../models/user')
 const bcrypt = require('bcryptjs')
 const createError = require("../../utils/error")
 const jwt = require("jsonwebtoken")
@@ -13,7 +12,7 @@ const redis = require('../../config/redis')
 const ROLES_LIST = require("../../config/allowedRoles")
 
 
-class authController{
+class AuthController{
     index(req,res){
         res.send("Hello from auth")
     }
@@ -57,6 +56,7 @@ class authController{
                 isActive: true,
                 verified: false
             })
+
             await newUser.save()
             const newToken = new verifyToken({
                 user_id: user._id,
@@ -165,7 +165,7 @@ class authController{
             res.clearCookie('refreshToken')
             redis.del(req.user.id.toString(), (err, reply)=>{
                     if(err) return next(createError(500,"Internal Server"))
-                    res.status(200).send("Log out")
+                    res.status(200).json({"message":"Log out"})
             })
         }
         catch(error) {
@@ -176,4 +176,5 @@ class authController{
 
 }
 
-module.exports = new authController
+module.exports = new AuthController
+

@@ -1,27 +1,27 @@
 const express = require('express')
 const router = express.Router()
-const reservationStatusEventController = require("../app/controller/reservationStatusEventController")
+const statusEventController = require("../app/controller/statusEventController")
 const verify = require("../middleware/verifyToken")
 
 const verifyRoles = require("../middleware/verifyRoles")
 const ROLES_LIST = require("../config/allowedRoles")
 
 //CREATE
-router.post("/create/:ReservationStatusEventId", reservationStatusEventController.createReservationStatusId)
+router.post("/create/", statusEventController.createReservationStatusEvent)
 
 //UPDATE
-router.put("/update/:ReservationStatusEventId", verifyRoles(ROLES_LIST.Admin), reservationStatusEventController.updateReservation)
+router.put("/update/:id", verifyRoles(ROLES_LIST.Admin), statusEventController.updateReservationStatusEvent)
 
 //DELETE
-router.delete("/:id/:ReservationStatusEventId", verifyRoles(ROLES_LIST.Admin), reservationStatusEventController.deleteReservation)
+router.delete("/:id", verifyRoles(ROLES_LIST.Admin), statusEventController.deleteReservationStatusEvent)
 
 //GET
-router.get("/get/:ReservationStatusEventId", reservationStatusEventController.getReservation)
+router.get("/get/:id", statusEventController.getReservationStatusEvent)
 
 //GETALL
-router.get("/get", reservationStatusEventController.getAllReservationStatusEvent)
+router.get("/get", statusEventController.getAllReservationStatusEvent)
 
 
-router.get("/", reservationStatusEventController.index)
+router.get("/", statusEventController.index)
 
 module.exports = router
