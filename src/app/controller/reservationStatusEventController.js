@@ -36,7 +36,7 @@ class reservationController {
         }
     }
 
-    async getReservation(req, res, next) {
+    async getReservationStatusEvent(req, res, next) {
         try {
             const reservation = await ReservationEvent.findById(req.params.id)
             res.status(200).json(reservation)
@@ -45,7 +45,7 @@ class reservationController {
         }
     }
 
-    async getAllReservation(req, res, next) {
+    async getAllReservationStatusEvent(req, res, next) {
 
         try {
             const reservationEvents = await ReservationEvent.find()
@@ -56,28 +56,26 @@ class reservationController {
         }
     }
 
-    async getReservationByCity(req, res, next) {
-        try {
-            const hotelId = await ReservationEvent.aggregate([{
-                        $match: {
-                            "current_price": 120000
-                        }
-                    },
-                    {
-                        $group: {
-                            _id: "$hotel_id"
-                        }
-                    }
-                ])
-                //console.log(hotelId)
-                //res.status(200).json(hotelId)
+    // async getReservationByCity(req, res, next) {
+    //     try {
+    //         const hotelId = await ReservationEvent.aggregate([{
+    //                     $match: {
+    //                         "current_price": 120000
+    //                     }
+    //                 },
+    //                 {
+    //                     $group: {
+    //                         _id: "$hotel_id"
+    //                     }
+    //                 }
+    //             ])
+    //             //console.log(hotelId)
+    //             //res.status(200).json(hotelId)
 
-        } catch (err) {
-            next(err)
-        }
-    }
+    //     } catch (err) {
+    //         next(err)
+    //     }
+    // }
 }
-
-
 
 module.exports = new reservationStatusEventController
