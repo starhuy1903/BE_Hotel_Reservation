@@ -12,6 +12,11 @@ const cookieParser = require("cookie-parser")
 const cors = require('cors')
 const credentials = require('./middleware/credentials')
 const corsOptions = require('./config/corsOptions')
+const cron = require('node-cron')
+const {updateSuccessReservation, updatePendingReservation} = require("./app/service/reservationStatus")
+
+cron.schedule('* * * * *',() => updateSuccessReservation())
+cron.schedule('* * * * *',() => updatePendingReservation())
 
 
 //static
