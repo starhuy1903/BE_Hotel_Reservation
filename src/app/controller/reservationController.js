@@ -139,9 +139,28 @@ class ReservationController {
         }
     }
 
-    // g
+    async getAllReservation(req, res, next) {
+
+        try {
+            const { maxPrice, minPrice, ...others } = req.query
+            const column = req.query.column || "_id"
+            const sort = req.query.sort || 1
+            const page = req.query.page || 1
+            const reservations = await Reservation.find({
+                ...others,
+                totalPrice: { $gt: minPrice | 1, $lt: maxPrice || 99999999999 },
+            }).sort({
+                [column]: sort })
+            const availablePage = Math.ceil(reservations.length / process.env.PER_PAGE)
+            if (page > availablePage && availableReservations.length !== 0) {
+                return next(createError(404, "Not Found"))
+            }
+            res.status(200).json(reservations)
+        } catch (err) {
+            next(err)
+        }
+    }
+
 }
-
-
 
 module.exports = new ReservationController
