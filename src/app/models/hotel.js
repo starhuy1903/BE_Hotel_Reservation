@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId;
 
 const hotelSchema = new Schema({
@@ -12,6 +12,6 @@ const hotelSchema = new Schema({
   cheapest_price: {type: Number, require: true},
   category_id: {type: ObjectId,require: true},
   owner_id: {type: ObjectId,require: true},
-});
+},{ timestamps: true })
 
 module.exports = mongoose.model('Hotel', hotelSchema)

@@ -6,12 +6,14 @@ const Category = require("../models/category")
 const createError = require("../../utils/error")
 const {findRoomServed} = require("../service/room")
 const {pagination} = require("../service/site")
+const mongoose = require('mongoose')
+
 class HotelController{
     index (req,res){
         res.send("Hello from hotel")
     }
     async createHotel(req, res, next){
-        const newHotel = new Hotel(req.body)
+        const newHotel = new Hotel({...req.body, owner_id: req.user.id})
         try{
             const savedHotel = await newHotel.save()
             res.status(200).json(savedHotel)
@@ -64,8 +66,9 @@ class HotelController{
 
             const availableHotels = (await Hotel.find({
                 ...others,
-                cheapest_price: { $gt: minPrice | 1, $lt: maxPrice || 99999999999 },
+                cheapest_price: { $gt: minPrice || 1, $lt: maxPrice || 99999999999 },
             }).sort({[column]: sort}))
+            
             const availablePage = Math.ceil(availableHotels.length/process.env.PER_PAGE)
             if(page>availablePage && availableHotels.length!==0){
                 return next(createError(404,"Not Found"))
@@ -175,12 +178,13 @@ class HotelController{
     }
     async getHotelByHotelOwner(req, res, next){
         try{
-            const userId = req?.user?.id
+            const userId = new mongoose.Types.ObjectId(req?.user?.id)
             if(!userId) return next(createError(403,"You're not authorized"))
             const hotels = await Hotel.find({
                 owner_id: userId
             })
             res.status(200).json(hotels)
+           
         }
         catch(err){
             next(err)

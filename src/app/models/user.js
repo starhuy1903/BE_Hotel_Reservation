@@ -1,7 +1,7 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
-const ObjectId = Schema.ObjectId;
-const Joi = require('joi');
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+const ObjectId = Schema.ObjectId
+const Joi = require('joi')
 
 const userSchema = new Schema({
   username: {type: String, require: true, unique: true},
@@ -14,7 +14,7 @@ const userSchema = new Schema({
   roles: {type: [String]},
   isActive: {type: Boolean},
   verified: {type: Boolean}
-},{timestamps: true});
+},{timestamps: true})
 
 
 // const validate = (user) => {

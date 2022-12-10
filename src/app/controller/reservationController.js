@@ -6,7 +6,7 @@ const RoomServed = require('../models/roomServed')
 const ReservationEvent = require('../models/reservationStatusEvent')
 const ReservationCatelog = require('../models/reservationCatelog')
 const {findRoomServed} = require("../service/room")
-
+const Room = require("../models/room")
 class ReservationController {
     index(req, res) {
         res.send("Hello from reservation")
@@ -70,14 +70,15 @@ class ReservationController {
             const discountPercent = req.body.discountPercent || 0
             
             const roomServeds = await findRoomServed(startDate, endDate)
+            console.log(roomServeds)
             if (roomServeds.map((roomServed)=>{return roomServed.roomId.toString()}).includes(roomId)){
                 return next(createError(400, "Room has been served"))
             }
 
-            const room = Room.findById(roomId)
+            const room = await Room.findById(roomId)
             if(room === null) return next(createError(404, "Room does not exist"))
 
-            const totalPrice = (endDate - startDate)*room.current_price
+            const totalPrice = ((new Date(endDate) - new Date(startDate))/((10**3)*60*60*24))*room.current_price
 
             //CREATE NEW RESERVATION
             const reservation = new Reservation({
@@ -97,7 +98,7 @@ class ReservationController {
             })
             await roomServed.save()
 
-            const reservationCatelog = ReservationCatelog.find({
+            const reservationCatelog = await ReservationCatelog.findOne({
                 statusName: 'pending'
             })
 
@@ -108,7 +109,7 @@ class ReservationController {
                 details: ""
             })
             await reservationEvent.save()
-            res.status(200).json(reservations)
+            res.status(200).json(reservation)
         } catch (err) {
             next(err)
         }

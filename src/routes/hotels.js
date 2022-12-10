@@ -2,36 +2,35 @@ const express = require('express')
 const router = express.Router()
 const hotelController = require("../app/controller/hotelController")
 const verify = require("../middleware/verifyToken")
-
+const {verifyBusiness} = require("../middleware/verifyUser")
 const verifyRoles =  require("../middleware/verifyRoles")
 const ROLES_LIST = require("../config/allowedRoles")
 
-//CREATE
-router.post("/create", hotelController.createHotel)
+//COUNT HOTEL
+router.get("/count/ByCity", hotelController.countByCity)
+router.get("/count/ByType", hotelController.countByType)
 
 //UPDATE
-router.put("/update/:id", verifyRoles(ROLES_LIST.Admin), hotelController.updateHotel)
+router.put("/update/:id", verifyRoles(ROLES_LIST.Admin, ROLES_LIST.Business), verifyBusiness, hotelController.updateHotel)
 
-//DELETE
-router.delete("/:id", verifyRoles(ROLES_LIST.Admin), hotelController.deleteHotel)
+//GET HOTEL BY OWNER
+router.get("/getByOwner", verifyRoles(ROLES_LIST.Business), hotelController.getHotelB.Business)
 
-//GET
-router.get("/get/:id", hotelController.getHotel)
-
-//GETALL
-router.get("/get", hotelController.getAllHotel)
-
-//COUNT HOTEL
-router.get("/countByCity", hotelController.countByCity)
-router.get("/countByType", hotelController.countByType)
+//CREATE
+router.post("/create", verifyRoles(ROLES_LIST.Business), hotelController.createHotel)
 
 //FILTER HOTEL
 router.get("/filter", hotelController.filterHotel)
 
-//GET HOTEL BY OWNER
-router.get("/getByOwner", verifyRoles(ROLES_LIST.HotelOwner), hotelController.getHotelByHotelOwner)
+//DELETE
+router.delete("/:id", verifyRoles(ROLES_LIST.Admin, ROLES_LIST.Business),verifyBusiness, hotelController.deleteHotel)
 
-//Default
-router.get("/", hotelController.index)
+//GET
+router.get("/:id", hotelController.getHotel)
+
+//GETALL
+router.get("/", hotelController.getAllHotel)
+
+
 
 module.exports = router

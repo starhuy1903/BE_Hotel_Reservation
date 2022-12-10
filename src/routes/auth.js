@@ -18,7 +18,4 @@ router.post("/refresh-token",verify.verifyRefeshToken, authController.refreshTok
 //LOGOUT
 router.delete("/logout",verify.verifyRefeshToken, authController.logout)
 
-
-router.get("/", authController.index)
-
 module.exports = router

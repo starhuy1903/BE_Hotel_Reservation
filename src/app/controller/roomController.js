@@ -10,6 +10,7 @@ const ReservationCatelog = require('../models/reservationCatelog')
 const {findRoomServed} = require("../service/room")
 const {pagination} = require("../service/site")
 const createError = require("../../utils/error")
+const { array } = require('joi')
 
 class RoomController{
     index (req,res){
@@ -70,9 +71,6 @@ class RoomController{
     async getAllRoom(req, res, next){
 
         try{
-            const date = new Date("2022-12-04T17:00:00.000Z")
-            console.log(date>0)
-            console.log(date<0)
             const rooms = await Room.find()
             res.status(200).json(rooms)
         }
@@ -107,6 +105,7 @@ class RoomController{
             }).sort({[column]: sort})).filter((room)=>{
                 return (!roomServedsId.includes(room._id.toString())) && (hotelsId.includes(room.hotel_id.toString()))
             })
+            
             //PAGINATION
             const availablePage = Math.ceil(availableRooms.length/process.env.PER_PAGE)
             if(page>availablePage && availableRooms.length!==0){

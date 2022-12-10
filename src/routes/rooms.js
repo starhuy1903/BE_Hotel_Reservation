@@ -2,31 +2,32 @@ const express = require('express')
 const router = express.Router()
 const roomController = require("../app/controller/roomController")
 const verify = require("../middleware/verifyToken")
-
+const {verifyRoomOwner, verifyBusiness} = require("../middleware/verifyUser")
 const verifyRoles =  require("../middleware/verifyRoles")
 const ROLES_LIST = require("../config/allowedRoles")
 
 //CREATE
-router.post("/create/:HotelId", roomController.createRoom)
+router.post("/create/:id", verifyRoles(ROLES_LIST.Business),verifyBusiness, roomController.createRoom)
 
 //UPDATE
-router.put("/update/:id", verifyRoles(ROLES_LIST.Admin), roomController.updateRoom)
+router.put("/update/:id", verifyRoles(ROLES_LIST.Business),verifyRoomOwner, roomController.updateRoom)
 
-//DELETE
-router.delete("/:id/:HotelId", verifyRoles(ROLES_LIST.Admin), roomController.deleteRoom)
+//FIND ROOM BY HOTEL
+router.get("/hotel/:id", roomController.getRoomByHotel)
 
-//GET
-router.get("/get/:id", roomController.getRoom)
-
-//GETALL
-router.get("/get", roomController.getAllRoom)
-
+//FIND ROOM BY HOTEL
+router.get("/hotel/:id", roomController.getRoomByHotel)
 
 //FIND ROOM BY CITY
-//router.get("/getRoomByCity", verifyRoles(ROLES_LIST.Admin, ROLES_LIST.User), roomController.getRoomByCity)
 router.get("/filter", roomController.filterRoom)
 
+//DELETE
+router.delete("/:id", verifyRoles(ROLES_LIST.HotelOwner), verifyRoomOwner, roomController.deleteRoom)
 
-router.get("/", roomController.index)
+//GET
+router.get("/:id", roomController.getRoom)
+
+//GETALL
+router.get("/", roomController.getAllRoom)
 
 module.exports = router

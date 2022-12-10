@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId;
 
 const reservationSchema = new Schema({
@@ -11,6 +11,6 @@ const reservationSchema = new Schema({
     discountPercent: { type: Number, require: true },
     totalPrice: { type: Number, require: true },
 
-}, { timestamps: true });
+}, { timestamps: true })
 
 module.exports = mongoose.model('Reservation', reservationSchema)

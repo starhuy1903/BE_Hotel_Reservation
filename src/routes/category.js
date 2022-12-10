@@ -7,7 +7,7 @@ const verifyRoles =  require("../middleware/verifyRoles")
 const ROLES_LIST = require("../config/allowedRoles")
 
 //CREATE
-router.post("/create/", categoryController.createCategory)
+router.post("/create/", verifyRoles(ROLES_LIST.Admin), categoryController.createCategory)
 
 //UPDATE
 router.put("/update/:id",  verifyRoles(ROLES_LIST.Admin), categoryController.updateCategory)
@@ -16,9 +16,9 @@ router.put("/update/:id",  verifyRoles(ROLES_LIST.Admin), categoryController.upd
 router.delete("/:id/:HotelId", verifyRoles(ROLES_LIST.Admin), categoryController.deleteCategory)
 
 //GET
-router.get("/get/:id", categoryController.getCategory)
+router.get("/:id", verifyRoles(ROLES_LIST.Admin), categoryController.getCategory)
 
 //GETALL
-router.get("/get", categoryController.getAllCategory)
+router.get("/", verifyRoles(ROLES_LIST.Admin), categoryController.getAllCategory)
 
 module.exports = router

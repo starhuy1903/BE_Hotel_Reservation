@@ -55,28 +55,18 @@ class ReservationEventController {
         }
     }
 
-    async updateSuccessReservation(req, res, next) {
+    async cancelReservationStatus(req, res, next) {
 
         try {
-            const reservationEvents = await updateSuccessReservation()
-            res.status(200).json(reservationEvents)
+            const reservationEvent = await ReservationEvent.findOne({reservationId: req.params.reservationId})
+            const cancelReservationEvent = await ReservationCatelog.findOne({statusName: 'cancel'})
+            const updatedReservationEvent = await ReservationEvent.findByIdAndUpdate(reservationEvent._id, { $set: {reservationStatusCatalogId: cancelReservationEvent._id} }, { new: true })
+            res.status(200).json(updatedReservationEvent)
         } catch (err) {
             //res.status(500).json(err)
             next(err)
         }
     }
-
-    async updatePendingReservation(req, res, next) {
-
-        try {
-            const reservationEvents = await updatePendingReservation()
-            res.status(200).json(reservationEvents)
-        } catch (err) {
-            //res.status(500).json(err)
-            next(err)
-        }
-    }
-
 }
 
 

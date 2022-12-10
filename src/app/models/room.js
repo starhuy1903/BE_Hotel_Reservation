@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
-const ObjectId = Schema.ObjectId;
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+const ObjectId = Schema.ObjectId
 
 const roomSchema = new Schema({
   room_name: {type: String, require: true},
@@ -14,7 +14,7 @@ const roomSchema = new Schema({
   description: {type: String, default: false},
   maxPeople: {type: Number, require: true}
  
-},{timestamps: true});
+},{timestamps: true})
 
 module.exports = mongoose.model('Room', roomSchema)
 
