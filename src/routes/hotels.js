@@ -5,6 +5,7 @@ const verify = require("../middleware/verifyToken")
 const {verifyBusiness} = require("../middleware/verifyUser")
 const verifyRoles =  require("../middleware/verifyRoles")
 const ROLES_LIST = require("../config/allowedRoles")
+const fileUploader = require('../config/cloudinary')
 
 //COUNT HOTEL
 router.get("/count/ByCity", hotelController.countByCity)
@@ -14,10 +15,10 @@ router.get("/count/ByType", hotelController.countByType)
 router.put("/update/:id", verifyRoles(ROLES_LIST.Admin, ROLES_LIST.Business), verifyBusiness, hotelController.updateHotel)
 
 //GET HOTEL BY OWNER
-router.get("/getByOwner", verifyRoles(ROLES_LIST.Business), hotelController.getHotelB.Business)
+router.get("/getByOwner", verifyRoles(ROLES_LIST.Business), hotelController.getHotelByHotelOwner)
 
 //CREATE
-router.post("/create", verifyRoles(ROLES_LIST.Business), hotelController.createHotel)
+router.post("/create", verifyRoles(ROLES_LIST.Business), fileUploader.array('file'), hotelController.createHotel)
 
 //FILTER HOTEL
 router.get("/filter", hotelController.filterHotel)

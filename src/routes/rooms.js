@@ -5,9 +5,9 @@ const verify = require("../middleware/verifyToken")
 const {verifyRoomOwner, verifyBusiness} = require("../middleware/verifyUser")
 const verifyRoles =  require("../middleware/verifyRoles")
 const ROLES_LIST = require("../config/allowedRoles")
-
+const fileUploader = require('../config/cloudinary')
 //CREATE
-router.post("/create/:id", verifyRoles(ROLES_LIST.Business),verifyBusiness, roomController.createRoom)
+router.post("/create/:id", verifyRoles(ROLES_LIST.Business),verifyBusiness, fileUploader.array('file'), roomController.createRoom)
 
 //UPDATE
 router.put("/update/:id", verifyRoles(ROLES_LIST.Business),verifyRoomOwner, roomController.updateRoom)
