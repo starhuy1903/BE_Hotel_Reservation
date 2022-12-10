@@ -60,7 +60,19 @@ class ReservationCatelogController{
         }
     }
 
-    
+    async filterReservationCatelog(req,res, next){
+        // FIND STATUS NAME
+        try{
+            if(req.params.statusName){
+                const ReservationCatelogs = (await ReservationCatelog.find({statusName: req.params.statusName})).filter((statusName)=>{
+                    return ReservationCatelog.statusName === req.params.statusName})
+                res.status(200).json(ReservationCatelogs)
+            }
+        }
+        catch(err){
+            next(err)
+        }      
+    }  
 }
     
 

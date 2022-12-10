@@ -147,7 +147,7 @@ class AuthController{
     async refreshToken(req, res, next){
          try{
             const token = jwt.sign({id: req.user.id, roles: req.user.roles}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: process.env.ACCESS_EXPIRE})
-            res.cookie("accessToken", token,{httpOnly: true, secure: true})
+            res.cookie("accessToken", token,{httpOnly: true, secure: false})
             res.status(200).send("Generate new access token successfully")
          }
          catch(error) {
