@@ -1,4 +1,3 @@
-
 const dotenv = require("dotenv")
 dotenv.config()
 
@@ -17,7 +16,7 @@ const corsOptions = require('./config/corsOptions')
 //static
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.urlencoded({
-  extended: true
+    extended: true
 }))
 
 
@@ -37,8 +36,6 @@ app.use(express.json())
 
 route(app)
 
-app.listen(8800, ()=>{
+app.listen(8800, () => {
     console.log("connected to server")
 })
-
-

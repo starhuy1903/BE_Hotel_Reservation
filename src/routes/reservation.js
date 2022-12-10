@@ -23,5 +23,7 @@ router.get("/get", reservationController.getAllReservation)
 
 
 router.get("/", reservationController.index)
-
+    //GETHISTORY
+router.get("/getHistory/:id", reservationController.getHistoryByAdminOwner)
+router.get("/getHistory/", reservationController.getHistoryByUserOwner)
 module.exports = router

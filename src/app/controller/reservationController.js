@@ -5,8 +5,9 @@ const createError = require("../../utils/error")
 const RoomServed = require('../models/roomServed')
 const ReservationEvent = require('../models/reservationStatusEvent')
 const ReservationCatelog = require('../models/reservationCatelog')
-const {findRoomServed} = require("../service/room")
-
+const { findRoomServed } = require("../service/room")
+const { User } = require('../../config/allowedRoles')
+const user = require("../models/user")
 class ReservationController {
     index(req, res) {
         res.send("Hello from reservation")
@@ -25,7 +26,7 @@ class ReservationController {
     async updateReservation(req, res, next) {
         try {
             const updatedReservation = await Reservation.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true })
-            if(updatedReservation === null) return next(createError(404, "Not Found"))
+            if (updatedReservation === null) return next(createError(404, "Not Found"))
             res.status(200).json(updatedReservation)
         } catch (err) {
             next(err)
@@ -35,7 +36,7 @@ class ReservationController {
     async deleteReservation(req, res, next) {
         try {
             const deletedReservation = await Reservation.findByIdAndDelete(req.params.id)
-            if(deletedReservation === null) return next(createError(404, "Not Found"))
+            if (deletedReservation === null) return next(createError(404, "Not Found"))
             res.status(200).json("reservation has been deleted")
         } catch (err) {
             next(err)
@@ -45,7 +46,7 @@ class ReservationController {
     async getReservation(req, res, next) {
         try {
             const reservation = await Reservation.findById(req.params.id)
-            if(reservation === null) return next(createError(404, "Not Found"))
+            if (reservation === null) return next(createError(404, "Not Found"))
             res.status(200).json(reservation)
         } catch (err) {
             next(err)
@@ -62,22 +63,22 @@ class ReservationController {
         }
     }
 
-    async reservation(req, res, next){
+    async reservation(req, res, next) {
         try {
-            const {startDate, endDate, roomId} = req.body
-            if(!startDate || !endDate || !roomId) return next(createError(400, "Bad request"))
+            const { startDate, endDate, roomId } = req.body
+            if (!startDate || !endDate || !roomId) return next(createError(400, "Bad request"))
             const userId = req.user.id
             const discountPercent = req.body.discountPercent || 0
-            
+
             const roomServeds = await findRoomServed(startDate, endDate)
-            if (roomServeds.map((roomServed)=>{return roomServed.roomId.toString()}).includes(roomId)){
+            if (roomServeds.map((roomServed) => { return roomServed.roomId.toString() }).includes(roomId)) {
                 return next(createError(400, "Room has been served"))
             }
 
             const room = Room.findById(roomId)
-            if(room === null) return next(createError(404, "Room does not exist"))
+            if (room === null) return next(createError(404, "Room does not exist"))
 
-            const totalPrice = (endDate - startDate)*room.current_price
+            const totalPrice = (endDate - startDate) * room.current_price
 
             //CREATE NEW RESERVATION
             const reservation = new Reservation({
@@ -101,7 +102,7 @@ class ReservationController {
                 statusName: 'pending'
             })
 
-             //CREATE NEW RESERVATION EVENT
+            //CREATE NEW RESERVATION EVENT
             const reservationEvent = new ReservationEvent({
                 reservationId: reservation._id,
                 reservationStatusCatalogId: reservationCatelog._id,
@@ -113,7 +114,32 @@ class ReservationController {
             next(err)
         }
     }
+    async getHistoryByAdminOwner(req, res, next) {
+        try {
+            const userId = await user.findById(req.params.id)
+            if (!userId) return next(createError(404, "User not found"))
+            const history = await Reservation.find({
+                userId
+            })
+            res.status(200).json(history)
+        } catch (err) {
+            next(err)
+        }
+    }
+    async getHistoryByUserOwner(req, res, next) {
+        try {
+            const userId = await user.findById(req.user.id)
+            if (!userId) return next(createError(404, "User not found"))
+            const history = await Reservation.find({
+                userId
+            })
+            res.status(200).json(history)
+        } catch (err) {
+            next(err)
+        }
+    }
 
+    // g
 }
 
 

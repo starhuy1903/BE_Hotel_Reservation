@@ -2,6 +2,7 @@
 
 const ReservationCatelog = require('../models/reservationCatelog')
 const createError = require("../../utils/error")
+const reservation = require('../models/reservation')
 
 class ReservationCatelogController {
     index(req, res) {
@@ -54,8 +55,6 @@ class ReservationCatelogController {
             next(err)
         }
     }
-
-
 }
 
 
