@@ -17,20 +17,6 @@ const userSchema = new Schema({
 },{timestamps: true});
 
 
-// const validate = (user) => {
-//   const schema = {
-//     username: Joi.string().required(),
-//     password: Joi.string().required(),
-//     //first_name: Joi.string().required(),
-//     //last_name: Joi.string().required(),
-//     email: Joi.string().email().required(),
-//     //phoneNumber: Joi.string(),
-//     //address: Joi.string(),
-//     //roles: Joi.array().items(Joi.string()),
-//     //isActive: Joi.boolean()
-//   }
-//   return Joi.validate(user, schema);
-// }
 
 module.exports = mongoose.model('User', userSchema);
 // module.exports = {validate};

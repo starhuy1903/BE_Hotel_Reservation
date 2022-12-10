@@ -51,8 +51,12 @@ class ReservationCatelogController{
     async getAllReservationCatelog(req, res, next){
 
         try{
-            const ReservationCatelogs = await ReservationCatelog.find()
-            res.status(200).json(ReservationCatelogs)
+            
+            const sort = req.query.sort || 1
+            
+            const availableReservationCatelogs = await ReservationCatelog.find().sort({statusName: sort})
+            
+            res.status(200).json(availableReservationCatelogs)
         }
         catch(err){
             //res.status(500).json(err)
@@ -60,19 +64,7 @@ class ReservationCatelogController{
         }
     }
 
-    async filterReservationCatelog(req,res, next){
-        // FIND STATUS NAME
-        try{
-            if(req.params.statusName){
-                const ReservationCatelogs = (await ReservationCatelog.find({statusName: req.params.statusName})).filter((statusName)=>{
-                    return ReservationCatelog.statusName === req.params.statusName})
-                res.status(200).json(ReservationCatelogs)
-            }
-        }
-        catch(err){
-            next(err)
-        }      
-    }  
+    
 }
     
 
