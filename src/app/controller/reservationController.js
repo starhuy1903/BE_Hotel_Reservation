@@ -25,7 +25,7 @@ class ReservationController {
     async updateReservation(req, res, next) {
         try {
             const updatedReservation = await Reservation.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true })
-            if(updatedReservation === null) return next(createError(404, "Not Found"))
+            if(!updatedReservation) return next(createError(404, "Not Found"))
             res.status(200).json(updatedReservation)
         } catch (err) {
             next(err)
@@ -35,7 +35,7 @@ class ReservationController {
     async deleteReservation(req, res, next) {
         try {
             const deletedReservation = await Reservation.findByIdAndDelete(req.params.id)
-            if(deletedReservation === null) return next(createError(404, "Not Found"))
+            if(!deletedReservation) return next(createError(404, "Not Found"))
             res.status(200).json("reservation has been deleted")
         } catch (err) {
             next(err)
@@ -45,7 +45,7 @@ class ReservationController {
     async getReservation(req, res, next) {
         try {
             const reservation = await Reservation.findById(req.params.id)
-            if(reservation === null) return next(createError(404, "Not Found"))
+            if(!reservation) return next(createError(404, "Not Found"))
             res.status(200).json(reservation)
         } catch (err) {
             next(err)

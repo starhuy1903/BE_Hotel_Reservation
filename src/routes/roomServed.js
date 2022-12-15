@@ -6,11 +6,11 @@ const verify = require("../middleware/verifyToken")
 const verifyRoles = require("../middleware/verifyRoles")
 const ROLES_LIST = require("../config/allowedRoles")
 
-//UPDATE
-router.put("/update/:id", verifyRoles(ROLES_LIST.Admin), roomServedController.updateRoomServed)
-
 //CREATE
 router.post("/create", roomServedController.createRoomServed)
+
+//UPDATE
+router.put("/:id", verifyRoles(ROLES_LIST.Admin), roomServedController.updateRoomServed)
 
 //DELETE
 router.delete("/:id", verifyRoles(ROLES_LIST.Admin), roomServedController.deleteRoomServed)

@@ -2,7 +2,7 @@ const User = require('../models/user')
 const bcrypt = require('bcryptjs')
 const createError = require("../../utils/error")
 const jwt = require("jsonwebtoken")
-
+const verifyToken = require("../models/token")
 const sendMail = require('../../utils/mailer')
 const Joi = require('joi');
 const crypto = require('crypto')

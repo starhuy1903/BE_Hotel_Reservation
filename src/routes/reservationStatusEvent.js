@@ -6,9 +6,6 @@ const verify = require("../middleware/verifyToken")
 const verifyRoles = require("../middleware/verifyRoles")
 const ROLES_LIST = require("../config/allowedRoles")
 
-//UPDATE
-router.put("/update/:id", verifyRoles(ROLES_LIST.Admin), statusEventController.updateReservationStatusEvent)
-
 //CREATE
 router.post("/create", verifyRoles(ROLES_LIST.Admin), statusEventController.createReservationStatusEvent)
 
@@ -17,6 +14,9 @@ router.get("/:id", verifyRoles(ROLES_LIST.Admin), statusEventController.getReser
 
 //DELETE
 router.delete("/:id", verifyRoles(ROLES_LIST.Admin), statusEventController.deleteReservationStatusEvent)
+
+//UPDATE
+router.put("/:id", verifyRoles(ROLES_LIST.Admin), statusEventController.updateReservationStatusEvent)
 
 //GETALL
 router.get("/", verifyRoles(ROLES_LIST.Admin), statusEventController.getAllReservationStatusEvent)

@@ -9,9 +9,6 @@ const fileUploader = require('../config/cloudinary')
 //CREATE
 router.post("/create/:id", verifyRoles(ROLES_LIST.Business),verifyBusiness, fileUploader.array('file'), roomController.createRoom)
 
-//UPDATE
-router.put("/update/:id", verifyRoles(ROLES_LIST.Business),verifyRoomOwner, roomController.updateRoom)
-
 //FIND ROOM BY HOTEL
 router.get("/hotel/:id", roomController.getRoomByHotel)
 
@@ -21,8 +18,11 @@ router.get("/hotel/:id", roomController.getRoomByHotel)
 //FIND ROOM BY CITY
 router.get("/filter", roomController.filterRoom)
 
+//UPDATE
+router.put("/:id", verifyRoles(ROLES_LIST.Business),verifyRoomOwner, roomController.updateRoom)
+
 //DELETE
-router.delete("/:id", verifyRoles(ROLES_LIST.HotelOwner), verifyRoomOwner, roomController.deleteRoom)
+router.delete("/:id", verifyRoles(ROLES_LIST.Business), verifyRoomOwner, roomController.deleteRoom)
 
 //GET
 router.get("/:id", roomController.getRoom)

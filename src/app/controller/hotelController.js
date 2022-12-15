@@ -25,7 +25,7 @@ class HotelController{
     async updateHotel(req, res, next){
         try{
             const updatedHotel = await Hotel.findByIdAndUpdate(req.params.id, {$set: req.body}, {new: true})
-            if(updatedHotel === null) return next(createError(404, "Not Found"))
+            if(!updatedHotel) return next(createError(404, "Not Found"))
             res.status(200).json(updatedHotel)
         }
         catch(err){
@@ -36,7 +36,7 @@ class HotelController{
     async deleteHotel(req, res, next){
         try{
             const deletedHotel = await Hotel.findByIdAndDelete(req.params.id)
-            if(deletedHotel === null) return next(createError(404, "Not Found"))
+            if(!deletedHotel) return next(createError(404, "Not Found"))
             res.status(200).json("Hotel has been deleted")
         }
         catch(err){
@@ -48,7 +48,7 @@ class HotelController{
         try{
             
             const hotel = await Hotel.findById(req.params.id)
-            if(hotel === null) return next(createError(404, "Not Found"))
+            if(!hotel) return next(createError(404, "Not Found"))
             res.status(200).json(hotel)
         }
         catch(err){
@@ -176,7 +176,7 @@ class HotelController{
             next(err)
         }
     }
-    async getHotelByHotelOwner(req, res, next){
+    async getHotelByBusiness(req, res, next){
         try{
             const userId = new mongoose.Types.ObjectId(req?.user?.id)
             if(!userId) return next(createError(403,"You're not authorized"))

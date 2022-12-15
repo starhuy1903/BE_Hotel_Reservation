@@ -30,7 +30,7 @@ class RoomController{
     async updateRoom(req, res, next){
         try{
             const updatedRoom = await Room.findByIdAndUpdate(req.params.id, {$set: req.body}, {new: true})
-            if(updatedRoom === null) return next(createError(404, "Not Found"))
+            if(!updatedRoom) return next(createError(404, "Not Found"))
             res.status(200).json(updatedRoom)
         }
         catch(err){
@@ -41,7 +41,7 @@ class RoomController{
     async deleteRoom(req, res, next){
         try{
             const deletedRoom = await Room.findByIdAndDelete(req.params.id)
-            if(deletedRoom === null) return next(createError(404, "Not Found"))
+            if(!deletedRoom) return next(createError(404, "Not Found"))
             res.status(200).json("room has been deleted")
         }
         catch(err){
@@ -52,7 +52,7 @@ class RoomController{
     async getRoom(req, res, next){
         try{
             const room = await Room.findById(req.params.id)
-            if(room === null) return next(createError(404, "Not Found"))
+            if(!room) return next(createError(404, "Not Found"))
             res.status(200).json(room)
         }
         catch(err){

@@ -8,9 +8,9 @@ async function verifyBusiness(req, res, next){
         if(userRoles.includes(ROLES_LIST.Admin)){
             next()
         }
-        else if(userRoles.includes(ROLES_LIST.HotelOwner)){
+        else if(userRoles.includes(ROLES_LIST.Business)){
             const hotel = await Hotel.findOne({_id:req.params.id})
-            if(hotel=== null) return next(createError(404, "Not Found"))
+            if(!hotel) return next(createError(404, "Not Found"))
             if(hotel.owner_id.toString() !== req.user.id) next(createError(403,"You're not authorized")) 
             next()
         }
@@ -26,9 +26,9 @@ async function verifyRoomOwner(req, res, next){
         if(userRoles.includes(ROLES_LIST.Admin)){
             next()
         }
-        else if(userRoles.includes(ROLES_LIST.HotelOwner)){
+        else if(userRoles.includes(ROLES_LIST.Business)){
             const room = await Room.findOne({_id:req.params.id})
-            if(room=== null) return next(createError(404, "Not Found"))
+            if(!room) return next(createError(404, "Not Found"))
             const hotel = await Hotel.findOne({_id: room.hotel_id})
             if(hotel.owner_id.toString() !== req.user.id) next(createError(403,"You're not authorized")) 
             next()

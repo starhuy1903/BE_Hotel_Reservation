@@ -12,14 +12,15 @@ router.get("/reset-password/:id/:key", userController.resetPassword)
 //VERIFY EMAIL
 router.get("/verify/:id/:key", userController.verifyEmailUser)
 
-//UPDATE
-router.put("/update/:id", verifyRoles(ROLES_LIST.User, ROLES_LIST.Admin), userController.updateUser)
 
 //CREATE
 router.post("/create", verifyRoles(ROLES_LIST.Admin), fileUploader.single('file'), userController.createUser)
 
 //DELETE
 router.delete("/:id", verifyRoles(ROLES_LIST.User, ROLES_LIST.Admin), userController.deleteUser)
+
+//UPDATE
+router.put("/:id", verifyRoles(ROLES_LIST.User, ROLES_LIST.Admin), userController.updateUser)
 
 //GET
 router.get("/:id", verifyRoles(ROLES_LIST.User, ROLES_LIST.Admin), userController.getUser)

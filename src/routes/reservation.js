@@ -5,14 +5,14 @@ const verify = require("../middleware/verifyToken")
 const verifyRoles = require("../middleware/verifyRoles")
 const ROLES_LIST = require("../config/allowedRoles")
 
-//UPDATE
-router.put("/update/:id", verifyRoles(ROLES_LIST.Admin), reservationController.updateReservation)
-
 //CREATE
 router.post("/create", verifyRoles(ROLES_LIST.Admin), reservationController.createReservation)
 
 //DELETE
 router.delete("/:id", verifyRoles(ROLES_LIST.Admin), reservationController.deleteReservation)
+
+//UPDATE
+router.put("/:id", verifyRoles(ROLES_LIST.Admin), reservationController.updateReservation)
 
 //GET
 router.get("/:id", reservationController.getReservation)

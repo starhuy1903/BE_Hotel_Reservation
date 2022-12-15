@@ -9,11 +9,11 @@ const ROLES_LIST = require("../config/allowedRoles")
 //CREATE
 router.post("/create/", verifyRoles(ROLES_LIST.Admin), categoryController.createCategory)
 
-//UPDATE
-router.put("/update/:id",  verifyRoles(ROLES_LIST.Admin), categoryController.updateCategory)
-
 //DELETE
-router.delete("/:id/:HotelId", verifyRoles(ROLES_LIST.Admin), categoryController.deleteCategory)
+router.delete("/:id", verifyRoles(ROLES_LIST.Admin), categoryController.deleteCategory)
+
+//UPDATE
+router.put("/:id",  verifyRoles(ROLES_LIST.Admin), categoryController.updateCategory)
 
 //GET
 router.get("/:id", verifyRoles(ROLES_LIST.Admin), categoryController.getCategory)

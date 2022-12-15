@@ -11,17 +11,17 @@ const fileUploader = require('../config/cloudinary')
 router.get("/count/ByCity", hotelController.countByCity)
 router.get("/count/ByType", hotelController.countByType)
 
-//UPDATE
-router.put("/update/:id", verifyRoles(ROLES_LIST.Admin, ROLES_LIST.Business), verifyBusiness, hotelController.updateHotel)
-
 //GET HOTEL BY OWNER
-router.get("/getByOwner", verifyRoles(ROLES_LIST.Business), hotelController.getHotelByHotelOwner)
+router.get("/getByOwner", verifyRoles(ROLES_LIST.Business), hotelController.getHotelByBusiness)
 
 //CREATE
 router.post("/create", verifyRoles(ROLES_LIST.Business), fileUploader.array('file'), hotelController.createHotel)
 
 //FILTER HOTEL
 router.get("/filter", hotelController.filterHotel)
+
+//UPDATE
+router.put("/:id", verifyRoles(ROLES_LIST.Admin, ROLES_LIST.Business), verifyBusiness, hotelController.updateHotel)
 
 //DELETE
 router.delete("/:id", verifyRoles(ROLES_LIST.Admin, ROLES_LIST.Business),verifyBusiness, hotelController.deleteHotel)
