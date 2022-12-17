@@ -8,6 +8,7 @@ const reservationEventsRoute = require("./reservationStatusEvent")
 const reservationCatelogRoute = require("./reservationCatelog")
 const roomTypeRoute = require("./roomType")
 const roomServedRoute = require("./roomServed")
+const cartRoute = require("./cart")
 const verify = require("../middleware/verifyToken")
 
 function route(app) {
@@ -21,6 +22,7 @@ function route(app) {
     app.use("/reservationStatus", verify.verifyToken, reservationEventsRoute)
     app.use("/reservationCatelog", verify.verifyToken, reservationCatelogRoute)
     app.use("/roomType", verify.verifyToken, roomTypeRoute)
+    app.use("/cart", verify.verifyToken, cartRoute)
     app.use((err, req, res, next) => {
         errorStatus = err.status || 500
         errMessage = err.message || ("Something went wrong")
