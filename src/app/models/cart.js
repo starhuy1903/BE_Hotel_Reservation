@@ -4,7 +4,8 @@ const ObjectId = Schema.ObjectId;
 
 const cartSchema = new Schema({
     reservationId: { type: Schema.ObjectId, require: true },
-    userId: { type: Schema.ObjectId, require: true }
+    userId: { type: Schema.ObjectId, require: true },
+    totalPrice: { type: Number, require: true }
 });
 
 module.exports = mongoose.model('Cart', cartSchema)

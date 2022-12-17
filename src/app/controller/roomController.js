@@ -5,7 +5,6 @@ const Hotel = require('../models/hotel')
 const reservation = require("../models/reservation")
 const RoomType = require('../models/roomType')
 const RoomServed = require('../models/roomServed')
-const ReservationEvent = require('../models/reservationStatusEvent')
 const ReservationCatelog = require('../models/reservationCatelog')
 const { findRoomServed } = require("../service/room")
 const { pagination } = require("../service/site")
@@ -99,7 +98,8 @@ class RoomController {
                     ...others,
                     current_price: { $gt: minPrice | 1, $lt: maxPrice || 99999999999 },
                 }).sort({
-                    [column]: sort })).filter((room) => {
+                    [column]: sort
+                })).filter((room) => {
                     return (!roomServedsId.includes(room._id.toString())) && (hotelsId.includes(room.hotel_id.toString()))
                 })
                 //PAGINATION

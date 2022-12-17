@@ -3,7 +3,6 @@
 const Reservation = require('../models/reservation')
 const createError = require("../../utils/error")
 const RoomServed = require('../models/roomServed')
-const ReservationEvent = require('../models/reservationStatusEvent')
 const ReservationCatelog = require('../models/reservationCatelog')
 const { findRoomServed } = require("../service/room")
 const { User } = require('../../config/allowedRoles')
@@ -15,7 +14,6 @@ class ReservationController {
     async createReservation(req, res, next) {
 
         const newReservation = new Reservation(req.body)
-        console.log(newReservation)
         try {
             const savedReservation = await newReservation.save()
             res.status(200).json(savedReservation)
@@ -150,7 +148,8 @@ class ReservationController {
                 ...others,
                 totalPrice: { $gt: minPrice | 1, $lt: maxPrice || 99999999999 },
             }).sort({
-                [column]: sort })
+                [column]: sort
+            })
             const availablePage = Math.ceil(reservations.length / process.env.PER_PAGE)
             if (page > availablePage && availableReservations.length !== 0) {
                 return next(createError(404, "Not Found"))
