@@ -16,6 +16,22 @@ class CartController {
             next(error)
         }
     }
+    async getCart(req, res, next) {
+        try {
+            const cart = await Cart.findById(req.params.id)
+            res.status(200).json(cart)
+        } catch (error) {
+            next(error)
+        }
+    }
+    async deleteCart(req, res, next) {
+        try {
+            const cart = await Cart.findByIdAndDelete(req.params.id)
+            res.status(200).json(cart)
+        } catch (error) {
+            next(error)
+        }
+    }
 }
 
 module.exports = new CartController
