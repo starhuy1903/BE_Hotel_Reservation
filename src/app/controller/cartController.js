@@ -24,7 +24,7 @@ class CartController {
             next(error)
         }
     }
-    async deleteCart(req, res, next) {
+    async deleteCart(req, res, next) { // huy
         try {
             const cart = await Cart.findByIdAndDelete(req.params.id)
             res.status(200).json(cart)
