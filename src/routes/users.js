@@ -7,11 +7,13 @@ const verifyRoles =  require("../middleware/verifyRoles")
 const ROLES_LIST = require("../config/allowedRoles")
 const fileUploader = require('../config/cloudinary')
 //RESET PASSWORD
-router.get("/reset-password/:id/:key", userController.resetPassword)
+router.post("/reset-password/:id/:key", userController.resetPassword)
 
 //VERIFY EMAIL
 router.get("/verify/:id/:key", userController.verifyEmailUser)
 
+//UPDATE BY ADMIN
+router.put("/admin/:id", verifyRoles(ROLES_LIST.Admin), userController.updateUserbyAdmin)
 
 //CREATE
 router.post("/create", verifyRoles(ROLES_LIST.Admin), fileUploader.single('file'), userController.createUser)
@@ -20,7 +22,7 @@ router.post("/create", verifyRoles(ROLES_LIST.Admin), fileUploader.single('file'
 router.delete("/:id", verifyRoles(ROLES_LIST.User, ROLES_LIST.Admin), userController.deleteUser)
 
 //UPDATE
-router.put("/:id", verifyRoles(ROLES_LIST.User, ROLES_LIST.Admin), userController.updateUser)
+router.put("/:id", verifyRoles(ROLES_LIST.User), userController.updateUser)
 
 //GET
 router.get("/:id", verifyRoles(ROLES_LIST.User, ROLES_LIST.Admin), userController.getUser)

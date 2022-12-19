@@ -21,6 +21,7 @@ class RoomTypeController{
     async updateRoomType(req, res, next){
         try{
             const updatedRoomType = await RoomType.findByIdAndUpdate(req.params.id, {$set: req.body}, {new: true})
+            if(!updatedRoomType) return next(createError(404,"Not Found"))
             res.status(200).json(updatedRoomType)
         }
         catch(err){
@@ -31,6 +32,7 @@ class RoomTypeController{
     async deleteRoomType(req, res, next){
         try{
             const deletedRoomType = await RoomType.findByIdAndDelete(req.params.id)
+            if(!deletedRoomType) return next(createError(404,"Not Found"))
             res.status(200).json("RoomType has been deleted")
         }
         catch(err){
@@ -40,8 +42,9 @@ class RoomTypeController{
 
     async getRoomType(req, res, next){
         try{
-            const RoomType = await RoomType.findById(req.params.id)
-            res.status(200).json(RoomType)
+            const roomType = await RoomType.findById(req.params.id)
+            if(!roomType) return next(createError(404,"Not Found"))
+            res.status(200).json(roomType)
         }
         catch(err){
             next(err)
@@ -51,8 +54,8 @@ class RoomTypeController{
     async getAllRoomType(req, res, next){
 
         try{
-            const RoomTypes = await RoomServed.find()
-            res.status(200).json(RoomServeds)
+            const RoomTypes = await RoomType.find()
+            res.status(200).json(RoomTypes)
         }
         catch(err){
             //res.status(500).json(err)

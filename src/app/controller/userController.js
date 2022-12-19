@@ -41,9 +41,40 @@ class UserController{
     }
     async updateUser(req, res, next){
         try{
+            if(req.user.id !== req.params.id) return next(createError(403,"You're not authorized")) 
+            const {username, email, roles, verified} = req.body
+            if(username || email || roles || verified) return next(createError(400,"Bad Request"))
+            if(!req.body.password) {
+                const updatedUser = await User.findByIdAndUpdate(req.params.id, {$set: req.body}, {new: true})
+                res.status(200).json(updatedUser)
+            }
             const salt = bcrypt.genSaltSync(10)
             const hash = bcrypt.hashSync(req.body.password, salt)
             const updatedUser = await User.findByIdAndUpdate(req.params.id, {$set: req.body, password: hash}, {new: true})
+            res.status(200).json({"message": "User has been updated"})
+        }
+        catch(err){
+            next(err)
+        }
+    }
+
+    async updateUserbyAdmin(req, res, next){
+        try{
+            const user = await User.findOne({_id: req.params.id})
+            if(!user) return next(createError(404,"Not Found")) 
+            if(!req.body.password) {
+                const updatedUser = await User.findByIdAndUpdate(req.params.id, {$set: req.body}, {new: true})
+                res.status(200).json(updatedUser)
+            }
+            let roles = []
+            for(let role of req.body.roles){
+                for(let key in ROLES_LIST){
+                    if(role === key) roles.push(ROLES_LIST[key])
+                }
+            }
+            const salt = bcrypt.genSaltSync(10)
+            const hash = bcrypt.hashSync(req.body.password, salt)
+            const updatedUser = await User.findByIdAndUpdate(req.params.id, {$set: req.body, password: hash, roles: roles}, {new: true})
             res.status(200).json(updatedUser)
         }
         catch(err){
@@ -54,7 +85,8 @@ class UserController{
     async deleteUser(req, res, next){
         try{
             const deletedUser = await User.findByIdAndDelete(req.params.id)
-            res.status(200).json("User has been deleted")
+            if(!deletedUser) return next(createError(404,"Not Found"))
+            res.status(200).json({"message": "User has been deleted"})
         }
         catch(err){
             next(err)
@@ -64,7 +96,9 @@ class UserController{
     async getUser(req, res, next){
         try{
             const newUser = await User.findById(req.params.id)
+            if(!newUser) return next(createError(404,"Not Found"))
             res.status(200).json(newUser)
+            
         }
         catch(err){
             next(err)
@@ -101,7 +135,7 @@ class UserController{
             const updatedUser = await User.findByIdAndUpdate(user._id, {password: hash}, {new: true})
             await token.remove()
             
-            res.status(200).json(updatedUser)
+            res.status(200).json({"message":"Reset Password Succesfully"})
         }
         catch(err){
             next(err)
@@ -117,12 +151,12 @@ class UserController{
                 key: req.params.key
             })
             
-            if(!token) return next(createError(400,"Token Invalid"))
+            if(!token) return next(createError(400,"Invalid link"))
 
             await User.findByIdAndUpdate(req.params.id, {verified: true}, {new: true})
             await token.remove()
 
-            res.status(200).send("Verify User Email Succesfully")
+            res.status(200).json({"message":"Verify User Email Succesfully"})
         }
         catch(err){
             next(err)

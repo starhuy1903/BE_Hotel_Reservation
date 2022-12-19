@@ -112,7 +112,7 @@ class RoomController{
                 return next(createError(404,"Not Found"))
             }
             const rooms = pagination(availableRooms, page)
-            res.status(200).json({"hotels": rooms, "availablePage": availablePage})
+            res.status(200).json({"rooms": rooms, "availablePage": availablePage})
         }
         catch(err){
             next(err)

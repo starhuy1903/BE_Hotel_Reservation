@@ -20,6 +20,7 @@ class ReservationEventController {
     async updateReservationStatusEvent(req, res, next) {
         try {
             const updatedReservationEvent = await ReservationEvent.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true })
+            if(!updatedReservationEvent) return next(createError(404,"Not Found"))
             res.status(200).json(updatedReservationEvent)
         } catch (err) {
             next(err)
@@ -29,6 +30,7 @@ class ReservationEventController {
     async deleteReservationStatusEvent(req, res, next) {
         try {
             const deletedReservationEvent = await ReservationEvent.findByIdAndDelete(req.params.id)
+            if(!deletedReservationEvent) return next(createError(404,"Not Found"))
             res.status(200).json("reservation has been deleted")
         } catch (err) {
             next(err)
@@ -38,6 +40,7 @@ class ReservationEventController {
     async getReservationStatusEvent(req, res, next) {
         try {
             const reservation = await ReservationEvent.findById(req.params.id)
+            if(!reservation) return next(createError(404,"Not Found"))
             res.status(200).json(reservation)
         } catch (err) {
             next(err)

@@ -64,19 +64,33 @@ class ReservationController {
 
     async reservation(req, res, next){
         try {
-            const {startDate, endDate, roomId} = req.body
-            if(!startDate || !endDate || !roomId) return next(createError(400, "Bad request"))
+            const {startDate, endDate, roomIds} = req.body
+            if(!startDate || !endDate || !roomIds) return next(createError(400, "Bad request"))
             const userId = req.user.id
             const discountPercent = req.body.discountPercent || 0
             
-            const roomServeds = await findRoomServed(startDate, endDate)
-            console.log(roomServeds)
+            const roomServeds = (await findRoomServed(startDate, endDate)).map((roomServed)=>{return roomServed.roomId.toString()})
+            //console.log(roomServeds)
             if (roomServeds.map((roomServed)=>{return roomServed.roomId.toString()}).includes(roomId)){
                 return next(createError(400, "Room has been served"))
             }
 
+            /*const result = roomIds.some(val => roomServeds.includes(val))
+            if(result) return next(createError(400, "Room has been served"))*/
+
             const room = await Room.findById(roomId)
-            if(room === null) return next(createError(404, "Room does not exist"))
+            if(!room) return next(createError(404, "Room does not exist"))
+
+            /*let rooms = []
+            for(let roomId of roomIds){
+                const room = await Room.findById(roomId)
+                if(!room) return next(createError(404, "Room does not exist"))
+                rooms.push(room)
+            }
+            const roomsPrice = rooms.reduce((total, room)=>{
+                return total + room.current_price
+            },0)
+            console.log(roomsPrice)*/
 
             const totalPrice = ((new Date(endDate) - new Date(startDate))/((10**3)*60*60*24))*room.current_price
 
@@ -98,6 +112,15 @@ class ReservationController {
             })
             await roomServed.save()
 
+            /*for(let room of rooms){
+                const roomServed = new RoomServed({
+                    roomId: room._id,
+                    reservationId: reservation._id,
+                    price: room.current_price
+                })
+                await roomServed.save()
+            }*/
+
             const reservationCatelog = await ReservationCatelog.findOne({
                 statusName: 'pending'
             })
@@ -106,7 +129,7 @@ class ReservationController {
             const reservationEvent = new ReservationEvent({
                 reservationId: reservation._id,
                 reservationStatusCatalogId: reservationCatelog._id,
-                details: ""
+                details: "pending"
             })
             await reservationEvent.save()
             res.status(200).json(reservation)
