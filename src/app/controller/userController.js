@@ -108,7 +108,12 @@ class UserController{
     async getAllUser(req, res, next){
 
         try{
-            const Users = await User.find()
+            const column = req.query.column || "roles"
+            const sort = req.query.sort || 1
+            const page = req.query.page || 1
+            const Users = await User.find().sort({[column]: sort})
+            const availablePage = Math.ceil(Users.length / process.env.PER_PAGE)
+            if(page > availablePage && Users.length!==0) return next(createError(400,"Page not found"))
             res.status(200).json(Users)
         }
         catch(err){

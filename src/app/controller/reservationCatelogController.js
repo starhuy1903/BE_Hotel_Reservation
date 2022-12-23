@@ -51,8 +51,12 @@ class ReservationCatelogController{
     async getAllReservationCatelog(req, res, next){
 
         try{
-            const ReservationCatelogs = await ReservationCatelog.find()
-            res.status(200).json(ReservationCatelogs)
+            
+            const sort = req.query.sort || 1
+            
+            const availableReservationCatelogs = await ReservationCatelog.find().sort({statusName: sort})
+            
+            res.status(200).json(availableReservationCatelogs)
         }
         catch(err){
             //res.status(500).json(err)

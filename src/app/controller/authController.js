@@ -99,11 +99,11 @@ class AuthController{
 
             const refreshToken = jwt.sign({id: user._id, roles: user.roles}, process.env.REFRESH_TOKEN_SECRET, {expiresIn: process.env.REFRESH_EXPIRE + 'd'})
             redis.set(user._id.toString(), refreshToken,"EX",process.env.REFRESH_EXPIRE*24*60*60)
-            res.cookie("refreshToken", refreshToken,{httpOnly: true, secure: true})
+            res.cookie("refreshToken", refreshToken,{httpOnly: true, secure: false})
             
 
             const token = jwt.sign({id: user._id, roles: user.roles}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: process.env.ACCESS_EXPIRE})
-            res.cookie("accessToken", token,{httpOnly: true, secure: true})
+            res.cookie("accessToken", token,{httpOnly: true, secure: false})
 
             res.status(200).json({
                 'accessToken': token
@@ -147,7 +147,7 @@ class AuthController{
     async refreshToken(req, res, next){
          try{
             const token = jwt.sign({id: req.user.id, roles: req.user.roles}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: process.env.ACCESS_EXPIRE})
-            res.cookie("accessToken", token,{httpOnly: true, secure: true})
+            res.cookie("accessToken", token,{httpOnly: true, secure: false})
             res.status(200).send("Generate new access token successfully")
          }
          catch(error) {
