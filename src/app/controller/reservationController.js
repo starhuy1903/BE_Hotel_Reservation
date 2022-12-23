@@ -75,8 +75,8 @@ class ReservationController {
 
     async reservation(req, res, next){
         try {
-            const {startDate, endDate, roomIds} = req.body
-            if(!startDate || !endDate || !roomIds) return next(createError(400, "Bad request"))
+            const {startDate, endDate, roomId} = req.body
+            if(!startDate || !endDate || !roomId) return next(createError(400, "Bad request"))
             const userId = req.user.id
             const discountPercent = req.body.discountPercent || 0
             
