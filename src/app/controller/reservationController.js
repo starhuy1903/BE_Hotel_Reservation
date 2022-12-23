@@ -64,7 +64,7 @@ class ReservationController {
                 totalPrice: { $gt: minPrice | 1, $lt: maxPrice || 99999999999 },
             }).sort({[column]: sort})
             const availablePage = Math.ceil(reservations.length / process.env.PER_PAGE)
-            if(page>availablePage && availableReservations.length!==0){
+            if(page>availablePage && reservations.length!==0){
                 return next(createError(404,"Not Found"))
             }
             res.status(200).json(reservations)

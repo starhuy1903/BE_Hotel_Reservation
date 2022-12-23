@@ -54,7 +54,7 @@ class ReservationCatelogController{
             
             const sort = req.query.sort || 1
             
-            const availableReservationCatelogs = await ReservationCatelog.find().sort({statusName: sort})
+            const availableReservationCatelogs = await ReservationCatelog.find({...req.query}).sort({statusName: sort})
             
             res.status(200).json(availableReservationCatelogs)
         }
