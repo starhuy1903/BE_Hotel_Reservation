@@ -89,10 +89,11 @@ class RoomController {
                 })
                 //FIND HOTEL MATCH CITY
             const hotelsId = (await Hotel.find({
-                    city: city
-                })).map(hotel => {
-                    return hotel._id.toString()
-                })
+                city: city
+            })).map(hotel => {
+                return hotel._id.toString()
+            })
+            console.log(hotelsId)
                 //FIND AVAILABLE ROOM
             const availableRooms = (await Room.find({
                     ...others,
@@ -103,6 +104,7 @@ class RoomController {
                     return (!roomServedsId.includes(room._id.toString())) && (hotelsId.includes(room.hotel_id.toString()))
                 })
                 //PAGINATION
+            console.log(availableRooms)
             const availablePage = Math.ceil(availableRooms.length / process.env.PER_PAGE)
             if (page > availablePage && availableRooms.length !== 0) {
                 return next(createError(404, "Not Found"))
