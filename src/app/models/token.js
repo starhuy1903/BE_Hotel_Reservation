@@ -7,4 +7,5 @@ const verifyTokenSchema = new Schema({
   key: {type: String, require: true},
 },{timestamps: true})
 
+verifyTokenSchema.index({createdAt: 1},{expireAfterSeconds: 3600*24*5});
 module.exports = mongoose.model('verifyToken', verifyTokenSchema)

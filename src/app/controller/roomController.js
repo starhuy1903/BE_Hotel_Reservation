@@ -18,7 +18,7 @@ class RoomController{
     }
     async createRoom(req, res, next){
         
-        const newroom = new Room(req.body)
+        const newroom = new Room({...req.body, hotel_id: req.params.id})
         try{
             const savedroom = await newroom.save()
             res.status(200).json(savedroom)

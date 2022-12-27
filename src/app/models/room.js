@@ -3,16 +3,15 @@ const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId
 
 const roomSchema = new Schema({
-  room_name: {type: String, require: true},
-  available: {type: Boolean,require: true},
-  current_price: {type: Number, require: true},
-  floor: {type: Number, require: true},
+  room_name: {type: String, required: true},
+  current_price: {type: Number, required: true},
+  floor: {type: Number, required: true},
   assets: {},
-  room_type_id: {type: Schema.ObjectId, require: true},
-  hotel_id: {type: Schema.ObjectId, require: true, ref: 'Hotel'},
+  room_type_id: {type: Schema.ObjectId, required: true},
+  hotel_id: {type: Schema.ObjectId, required: true},
   photos: {type: [String]},
-  description: {type: String, default: false},
-  maxPeople: {type: Number, require: true}
+  description: {type: String},
+  maxPeople: {type: Number, required: true}
  
 },{timestamps: true})
 
