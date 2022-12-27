@@ -6,8 +6,7 @@ const {verifyRoomOwner, verifyBusiness} = require("../middleware/verifyUser")
 const verifyRoles =  require("../middleware/verifyRoles")
 const ROLES_LIST = require("../config/allowedRoles")
 const fileUploader = require('../config/cloudinary')
-//CREATE
-router.post("/create/:id", verifyRoles(ROLES_LIST.Business), verifyBusiness, fileUploader.array('file'), roomController.createRoom)
+
 
 //FIND ROOM BY HOTEL
 router.get("/hotel/:id", roomController.getRoomByHotel)
@@ -26,6 +25,9 @@ router.delete("/:id", verifyRoles(ROLES_LIST.Business), verifyRoomOwner, roomCon
 
 //GET
 router.get("/:id", roomController.getRoom)
+
+//CREATE
+router.post("/:id", verifyRoles(ROLES_LIST.Business), verifyBusiness, fileUploader.array('file'), roomController.createRoom)
 
 //GETALL
 router.get("/", roomController.getAllRoom)

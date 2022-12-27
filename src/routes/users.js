@@ -15,9 +15,6 @@ router.get("/verify/:id/:key", userController.verifyEmailUser)
 //UPDATE BY ADMIN
 router.put("/admin/:id", verifyRoles(ROLES_LIST.Admin), userController.updateUserbyAdmin)
 
-//CREATE
-router.post("/create", verifyRoles(ROLES_LIST.Admin), fileUploader.single('file'), userController.createUser)
-
 //DELETE
 router.delete("/:id", verifyRoles(ROLES_LIST.User, ROLES_LIST.Admin), userController.deleteUser)
 
@@ -29,6 +26,9 @@ router.get("/:id", verifyRoles(ROLES_LIST.User, ROLES_LIST.Admin), userControlle
 
 //GETALL
 router.get("/", verifyRoles(ROLES_LIST.Admin), userController.getAllUser)
+
+//CREATE
+router.post("/", verifyRoles(ROLES_LIST.Admin), fileUploader.single('file'), userController.createUser)
 
 
 

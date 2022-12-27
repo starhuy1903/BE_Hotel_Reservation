@@ -6,9 +6,6 @@ const verify = require("../middleware/verifyToken")
 const verifyRoles = require("../middleware/verifyRoles")
 const ROLES_LIST = require("../config/allowedRoles")
 
-//CREATE
-router.post("/create", verifyRoles(ROLES_LIST.Admin), reservationCatelogController.createReservationCatelog)
-
 //DELETE
 router.delete("/:id", verifyRoles(ROLES_LIST.Admin), reservationCatelogController.deleteReservationCatelog)
 
@@ -20,5 +17,8 @@ router.get("/:id",verifyRoles(ROLES_LIST.Admin), reservationCatelogController.ge
 
 //GETALL
 router.get("/",verifyRoles(ROLES_LIST.Admin), reservationCatelogController.getAllReservationCatelog)
+
+//CREATE
+router.post("/", verifyRoles(ROLES_LIST.Admin), reservationCatelogController.createReservationCatelog)
 
 module.exports = router

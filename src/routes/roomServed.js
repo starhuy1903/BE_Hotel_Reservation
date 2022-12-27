@@ -6,9 +6,6 @@ const verify = require("../middleware/verifyToken")
 const verifyRoles = require("../middleware/verifyRoles")
 const ROLES_LIST = require("../config/allowedRoles")
 
-//CREATE
-router.post("/create", roomServedController.createRoomServed)
-
 //UPDATE
 router.put("/:id", verifyRoles(ROLES_LIST.Admin), roomServedController.updateRoomServed)
 
@@ -20,6 +17,9 @@ router.get("/:id", roomServedController.getRoomServed)
 
 //GETALL
 router.get("/", roomServedController.getAllRoomServed)
+
+//CREATE
+router.post("/", roomServedController.createRoomServed)
 
 
 module.exports = router

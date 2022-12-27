@@ -14,9 +14,6 @@ router.get("/count/ByType", hotelController.countByType)
 //GET HOTEL BY OWNER
 router.get("/getByOwner", verifyRoles(ROLES_LIST.Business), hotelController.getHotelByBusiness)
 
-//CREATE
-router.post("/create", verifyRoles(ROLES_LIST.Business), fileUploader.array('file'), hotelController.createHotel)
-
 //FILTER HOTEL
 router.get("/filter", hotelController.filterHotel)
 
@@ -32,6 +29,8 @@ router.get("/:id", hotelController.getHotel)
 //GETALL
 router.get("/", hotelController.getAllHotel)
 
+//CREATE
+router.post("/", verifyRoles(ROLES_LIST.Business), fileUploader.array('file'), hotelController.createHotel)
 
 
 module.exports = router

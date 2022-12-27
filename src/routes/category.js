@@ -6,8 +6,6 @@ const verify = require("../middleware/verifyToken")
 const verifyRoles =  require("../middleware/verifyRoles")
 const ROLES_LIST = require("../config/allowedRoles")
 
-//CREATE
-router.post("/create/", verifyRoles(ROLES_LIST.Admin), categoryController.createCategory)
 
 //DELETE
 router.delete("/:id", verifyRoles(ROLES_LIST.Admin), categoryController.deleteCategory)
@@ -20,5 +18,8 @@ router.get("/:id", verifyRoles(ROLES_LIST.Admin), categoryController.getCategory
 
 //GETALL
 router.get("/", verifyRoles(ROLES_LIST.Admin), categoryController.getAllCategory)
+
+//CREATE
+router.post("/", verifyRoles(ROLES_LIST.Admin), categoryController.createCategory)
 
 module.exports = router

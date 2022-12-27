@@ -6,8 +6,7 @@ const verify = require("../middleware/verifyToken")
 const verifyRoles = require("../middleware/verifyRoles")
 const ROLES_LIST = require("../config/allowedRoles")
 
-//CREATE
-router.post("/create", verifyRoles(ROLES_LIST.Admin), statusEventController.createReservationStatusEvent)
+
 
 //GET
 router.get("/:id", verifyRoles(ROLES_LIST.Admin), statusEventController.getReservationStatusEvent)
@@ -21,5 +20,7 @@ router.put("/:id", verifyRoles(ROLES_LIST.Admin), statusEventController.updateRe
 //GETALL
 router.get("/", verifyRoles(ROLES_LIST.Admin), statusEventController.getAllReservationStatusEvent)
 
+//CREATE
+router.post("/", verifyRoles(ROLES_LIST.Admin), statusEventController.createReservationStatusEvent)
 
 module.exports = router
