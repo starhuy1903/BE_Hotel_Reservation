@@ -15,6 +15,9 @@ router.get("/verify/:id/:key", userController.verifyEmailUser)
 //UPDATE BY ADMIN
 router.put("/admin/:id", verifyRoles(ROLES_LIST.Admin), userController.updateUserbyAdmin)
 
+//GET USER PROFILE
+router.get("/me", userController.getUserProfile)
+
 //DELETE
 router.delete("/:id", verifyRoles(ROLES_LIST.User, ROLES_LIST.Admin), userController.deleteUser)
 

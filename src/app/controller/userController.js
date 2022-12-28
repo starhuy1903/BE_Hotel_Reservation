@@ -167,7 +167,17 @@ class UserController{
             next(err)
         }
     }
-
+    async getUserProfile(req, res, next){
+        try{
+            const user = await User.findOne({_id: req.user.id})
+            if(!user) return next(createError(400,"Not Found"))
+            res.status(200).json(user)
+            
+        }
+        catch(err){
+            next(err)
+        }
+    }
 }
 
 module.exports = new UserController
