@@ -12,8 +12,8 @@ const verify = require("../middleware/verifyToken")
 
 function route(app) {
     app.use("/auth", authRoute)
-    app.use("/hotel", verify.verifyToken, hotelRoute)
-    app.use("/room", verify.verifyToken, roomRoute)
+    app.use("/hotel", hotelRoute)
+    app.use("/room", roomRoute)
     app.use("/user", verify.verifyToken, userRoute)
     app.use("/category", verify.verifyToken, categoryRoute)
     app.use("/reservation", verify.verifyToken, reservationRoute)
