@@ -1,24 +1,43 @@
-const express = require('express')
-const router = express.Router()
-const reservationCatelogController = require("../app/controller/reservationCatelogController")
-const verify = require("../middleware/verifyToken")
+const express = require("express");
+const router = express.Router();
+const reservationCatelogController = require("../app/controller/reservationCatelogController");
 
-const verifyRoles = require("../middleware/verifyRoles")
-const ROLES_LIST = require("../config/allowedRoles")
+const verifyRoles = require("../middleware/verifyRoles");
+const ROLES_LIST = require("../config/allowedRoles");
 
 //DELETE
-router.delete("/:id", verifyRoles(ROLES_LIST.Admin), reservationCatelogController.deleteReservationCatelog)
+router.delete(
+  "/:id",
+  verifyRoles(ROLES_LIST.Admin),
+  reservationCatelogController.deleteReservationCatelog
+);
 
 //UPDATE
-router.put("/:id", verifyRoles(ROLES_LIST.Admin), reservationCatelogController.updateReservationCatelog)
+router.put(
+  "/:id",
+  verifyRoles(ROLES_LIST.Admin),
+  reservationCatelogController.updateReservationCatelog
+);
 
 //GET
-router.get("/:id",verifyRoles(ROLES_LIST.Admin), reservationCatelogController.getReservationCatelog)
+router.get(
+  "/:id",
+  verifyRoles(ROLES_LIST.Admin),
+  reservationCatelogController.getReservationCatelog
+);
 
 //GETALL
-router.get("/",verifyRoles(ROLES_LIST.Admin), reservationCatelogController.getAllReservationCatelog)
+router.get(
+  "/",
+  verifyRoles(ROLES_LIST.Admin),
+  reservationCatelogController.getAllReservationCatelog
+);
 
 //CREATE
-router.post("/", verifyRoles(ROLES_LIST.Admin), reservationCatelogController.createReservationCatelog)
+router.post(
+  "/",
+  verifyRoles(ROLES_LIST.Admin),
+  reservationCatelogController.createReservationCatelog
+);
 
-module.exports = router
+module.exports = router;

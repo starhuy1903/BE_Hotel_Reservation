@@ -1,19 +1,19 @@
-const cloudinary = require('cloudinary').v2;
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const multer = require('multer');
+const cloudinary = require("cloudinary").v2;
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const multer = require("multer");
 
-cloudinary.config({ 
-    cloud_name: process.env.CLOUDINARY_NAME, 
-    api_key: process.env.CLOUDINARY_API_KEY, 
-    api_secret: process.env.CLOUDINARY_API_SERCRET 
-  });
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SERCRET,
+});
 
 const storage = new CloudinaryStorage({
   cloudinary,
-  allowedFormats: ['jpg', 'png'],
+  allowedFormats: ["jpg", "png"],
   filename: function (req, file, cb) {
-    cb(null, file.originalname); 
-  }
+    cb(null, file.originalname);
+  },
 });
 
 const uploadCloud = multer({ storage });
