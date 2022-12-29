@@ -63,10 +63,17 @@ class HotelController{
             const column = req.query.column || "name"
             const sort = req.query.sort || 1
             const page = req.query.page || 1
-
+            let category = req.query.category
+            if(!category){
+                category = (await Category.find({})).map(category => {return category._id.toString()})
+            }
+            else{
+                category = (await Category.find({category_name: category})).map(category => category._id.toString())
+            }
             const availableHotels = (await Hotel.find({
                 ...others,
                 cheapest_price: { $gt: minPrice || 1, $lt: maxPrice || 99999999999 },
+                category_id: {$in: category}
             }).sort({[column]: sort}))
             
             const availablePage = Math.ceil(availableHotels.length/process.env.PER_PAGE)
@@ -125,7 +132,13 @@ class HotelController{
             const sort = req.query.sort || 1
             const page = req.query.page || 1
             const groupBy = (x,f)=>x.reduce((a,b,i)=>((a[f(b,i,x)]||=[]).push(b),a),{})
-
+            let category = req.query.category
+            if(!category){
+                category = (await Category.find({})).map(category => {return category._id.toString()})
+            }
+            else{
+                category = (await Category.find({category_name: category})).map(category => category._id.toString())
+            }
             //FIND ROOM SERVED
             const roomServeds = await findRoomServed(startDate, endDate)
            
@@ -157,6 +170,7 @@ class HotelController{
             const availableHotels = (await Hotel.find({
                 ...others,
                 cheapest_price: { $gt: minPrice | 1, $lt: maxPrice || 99999999999 },
+                category_id: {$in: category}
             }).sort({[column]: sort})).filter(hotel =>{
                 return availableHotelsId.includes(hotel._id.toString())
             })

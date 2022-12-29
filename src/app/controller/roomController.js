@@ -75,10 +75,17 @@ class RoomController{
             const column = req.query.column || "room_name"
             const sort = req.query.sort || 1
             const page = req.query.page || 1
-
+            let roomType = req.query.room_type
+            if(!roomType){
+                roomType = (await RoomType.find({})).map(room_type => {return room_type._id.toString()})
+            }
+            else{
+                roomType = (await RoomType.find({typeName: roomType})).map(room_type => room_type._id.toString())
+            }
             const rooms = (await Room.find({
                 ...others,
                 current_price: { $gt: minPrice || 1, $lt: maxPrice || 99999999999 },
+                room_type_id: {$in: roomType}
             }).sort({[column]: sort}))
             const availablePage = Math.ceil(rooms.length/process.env.PER_PAGE)
             if(page>availablePage && rooms.length!==0){
@@ -100,6 +107,13 @@ class RoomController{
             const column = req.query.column || "room_name"
             const sort = req.query.sort || 1
             const page = req.query.page || 1
+            let roomType = req.query.room_type
+            if(!roomType){
+                roomType = (await RoomType.find({})).map(room_type => {return room_type._id.toString()})
+            }
+            else{
+                roomType = (await RoomType.find({typeName: roomType})).map(room_type => room_type._id.toString())
+            }
             //FIND ROOMSERVED
             const roomServeds = await findRoomServed(startDate, endDate)
             //PARSE ROOMSERVED ID
@@ -116,6 +130,7 @@ class RoomController{
             const availableRooms = (await Room.find({
                 ...others,
                 current_price: { $gt: minPrice | 1, $lt: maxPrice || 99999999999 },
+                room_type_id: {$in: roomType}
             }).sort({[column]: sort})).filter((room)=>{
                 return (!roomServedsId.includes(room._id.toString())) && (hotelsId.includes(room.hotel_id.toString()))
             })
