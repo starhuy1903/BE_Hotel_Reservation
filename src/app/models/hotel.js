@@ -3,15 +3,15 @@ const Schema = mongoose.Schema
 const ObjectId = Schema.ObjectId;
 
 const hotelSchema = new Schema({
-  name: {type: String, require: true},
-  address: {type: String, require: true},
-  city:{type: String, require: true},
+  name: {type: String, required: true},
+  address: {type: String, required: true},
+  city:{type: String, required: true},
   photos: {type: [String]},
   description: {type: String, require: true},
   phone_number: {type: String},
-  cheapest_price: {type: Number, require: true},
-  category_id: {type: ObjectId,require: true},
-  owner_id: {type: ObjectId,require: true},
+  cheapest_price: {type: Number, required: true},
+  category_id: {type: ObjectId,required: true},
+  owner_id: {type: ObjectId,required: true},
 },{ timestamps: true })
 
 module.exports = mongoose.model('Hotel', hotelSchema)

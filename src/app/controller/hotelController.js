@@ -67,7 +67,7 @@ class HotelController{
             const availableHotels = (await Hotel.find({
                 ...others,
                 cheapest_price: { $gt: minPrice || 1, $lt: maxPrice || 99999999999 },
-            }).sort({[column]: sort}))
+            }).sort({[column]: sort}).populate('categories'))
             
             const availablePage = Math.ceil(availableHotels.length/process.env.PER_PAGE)
             if(page>availablePage && availableHotels.length!==0){
@@ -124,6 +124,7 @@ class HotelController{
             const column = req.query.column || "name"
             const sort = req.query.sort || 1
             const page = req.query.page || 1
+            const groupBy = (x,f)=>x.reduce((a,b,i)=>((a[f(b,i,x)]||=[]).push(b),a),{})
 
             //FIND ROOM SERVED
             const roomServeds = await findRoomServed(startDate, endDate)
@@ -138,15 +139,12 @@ class HotelController{
                 return (!roomServedsId.includes(room._id.toString()))
             })
 
-            const groupBy = (x,f)=>x.reduce((a,b,i)=>((a[f(b,i,x)]||=[]).push(b),a),{})
-
             //FIND AVAILABLE HOTEL ID
             const groupByHotels = groupBy(availableRooms, (v)=> v.hotel_id)
             const availableHotelsId = []
             for(let hotel in groupByHotels){
                 let maxPeople = 0
                 for(let room of groupByHotels[hotel]){
-                    console.log(room)
                     maxPeople+=room.maxPeople
                 }
                 if(maxPeople > numPeople){

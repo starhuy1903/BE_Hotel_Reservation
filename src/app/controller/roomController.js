@@ -71,8 +71,22 @@ class RoomController{
     async getAllRoom(req, res, next){
 
         try{
-            const rooms = await Room.find()
-            res.status(200).json(rooms)
+            const {maxPrice,minPrice, ...others} = req.query
+            const column = req.query.column || "room_name"
+            const sort = req.query.sort || 1
+            const page = req.query.page || 1
+
+            const rooms = (await Room.find({
+                ...others,
+                current_price: { $gt: minPrice || 1, $lt: maxPrice || 99999999999 },
+            }).sort({[column]: sort}))
+            const availablePage = Math.ceil(rooms.length/process.env.PER_PAGE)
+            if(page>availablePage && rooms.length!==0){
+                return next(createError(404,"Not Found"))
+            }
+            const Rooms = pagination(rooms, page)
+            res.status(200).json({"rooms": Rooms, "availablePage": availablePage})
+            
         }
         catch(err){
             //res.status(500).json(err)
