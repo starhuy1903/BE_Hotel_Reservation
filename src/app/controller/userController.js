@@ -171,7 +171,8 @@ class UserController{
         try{
             const user = await User.findOne({_id: req.user.id})
             if(!user) return next(createError(400,"Not Found"))
-            res.status(200).json(user)
+            const {password,roles, ...otherDetails} = user._doc
+            res.status(200).json(otherDetails)
             
         }
         catch(err){
