@@ -12,16 +12,16 @@ router.get("/count/ByCity", hotelController.countByCity)
 router.get("/count/ByType", hotelController.countByType)
 
 //GET HOTEL BY OWNER
-router.get("/getByOwner", verifyRoles(ROLES_LIST.Business), hotelController.getHotelByBusiness)
+router.get("/getByOwner",verify.verifyToken, verifyRoles(ROLES_LIST.Business), hotelController.getHotelByBusiness)
 
 //FILTER HOTEL
 router.get("/filter", hotelController.filterHotel)
 
 //UPDATE
-router.put("/:id", verifyRoles(ROLES_LIST.Admin, ROLES_LIST.Business), verifyBusiness, hotelController.updateHotel)
+router.put("/:id",verify.verifyToken, verifyRoles(ROLES_LIST.Admin, ROLES_LIST.Business), verifyBusiness, hotelController.updateHotel)
 
 //DELETE
-router.delete("/:id", verifyRoles(ROLES_LIST.Admin, ROLES_LIST.Business),verifyBusiness, hotelController.deleteHotel)
+router.delete("/:id",verify.verifyToken, verifyRoles(ROLES_LIST.Admin, ROLES_LIST.Business),verifyBusiness, hotelController.deleteHotel)
 
 //GET
 router.get("/:id", hotelController.getHotel)
@@ -30,7 +30,7 @@ router.get("/:id", hotelController.getHotel)
 router.get("/", hotelController.getAllHotel)
 
 //CREATE
-router.post("/", verifyRoles(ROLES_LIST.Business), fileUploader.array('file'), hotelController.createHotel)
+router.post("/", verify.verifyToken, verifyRoles(ROLES_LIST.Business), fileUploader.array('file'), hotelController.createHotel)
 
 
 module.exports = router

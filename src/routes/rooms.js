@@ -18,16 +18,16 @@ router.get("/hotel/:id", roomController.getRoomByHotel)
 router.get("/filter", roomController.filterRoom)
 
 //UPDATE
-router.put("/:id", verifyRoles(ROLES_LIST.Business),verifyRoomOwner, roomController.updateRoom)
+router.put("/:id", verify.verifyToken, verifyRoles(ROLES_LIST.Business),verifyRoomOwner, roomController.updateRoom)
 
 //DELETE
-router.delete("/:id", verifyRoles(ROLES_LIST.Business), verifyRoomOwner, roomController.deleteRoom)
+router.delete("/:id", verify.verifyToken, verifyRoles(ROLES_LIST.Business), verifyRoomOwner, roomController.deleteRoom)
 
 //GET
 router.get("/:id", roomController.getRoom)
 
 //CREATE
-router.post("/:id", verifyRoles(ROLES_LIST.Business), verifyBusiness, fileUploader.array('file'), roomController.createRoom)
+router.post("/:id", verify.verifyToken, verifyRoles(ROLES_LIST.Business), verifyBusiness, fileUploader.array('file'), roomController.createRoom)
 
 //GETALL
 router.get("/", roomController.getAllRoom)
