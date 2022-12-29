@@ -67,7 +67,7 @@ class HotelController{
             const availableHotels = (await Hotel.find({
                 ...others,
                 cheapest_price: { $gt: minPrice || 1, $lt: maxPrice || 99999999999 },
-            }).sort({[column]: sort}).populate('categories'))
+            }).sort({[column]: sort}))
             
             const availablePage = Math.ceil(availableHotels.length/process.env.PER_PAGE)
             if(page>availablePage && availableHotels.length!==0){
