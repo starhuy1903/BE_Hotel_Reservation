@@ -3,7 +3,7 @@ const verifyToken = require("../models/token")
 const bcrypt = require('bcryptjs')
 const createError = require("../../utils/error")
 const ROLES_LIST = require("../../config/allowedRoles")
-
+const {getHistory} = require("../service/History")
 class UserController{
     index (req,res){
         res.send("Hello from user")
@@ -173,6 +173,16 @@ class UserController{
             if(!user) return next(createError(400,"Not Found"))
             const {password,roles, ...otherDetails} = user._doc
             res.status(200).json(otherDetails)
+            
+        }
+        catch(err){
+            next(err)
+        }
+    }
+    async getUserHistory(req, res, next){
+        try{
+            const history = await getHistory(req.user.id)
+            res.status(200).json(history)
             
         }
         catch(err){

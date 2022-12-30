@@ -18,6 +18,9 @@ router.put("/admin/:id", verifyRoles(ROLES_LIST.Admin), userController.updateUse
 //GET USER PROFILE
 router.get("/me", userController.getUserProfile)
 
+//GET USER HISTORY
+router.get("/history", userController.getUserHistory)
+
 //DELETE
 router.delete("/:id", verifyRoles(ROLES_LIST.User, ROLES_LIST.Admin), userController.deleteUser)
 
