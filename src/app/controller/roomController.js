@@ -11,7 +11,7 @@ const {findRoomServed} = require("../service/room")
 const {pagination} = require("../service/site")
 const createError = require("../../utils/error")
 const { array } = require('joi')
-
+const mongoose = require('mongoose')
 class RoomController{
     index (req,res){
         res.send("Hello from room")
@@ -51,8 +51,19 @@ class RoomController{
 
     async getRoom(req, res, next){
         try{
-            const room = await Room.findById(req.params.id)
-            if(!room) return next(createError(404, "Not Found"))
+            const room = (await Room.aggregate([
+                {$match: {_id:  mongoose.Types.ObjectId(req.params.id)}},
+                { $lookup: {
+                    from: "hotels",
+                    let: { hotelId: "$hotel_id"},
+                    pipeline: [
+                        {$match: {$expr: {$and: [{ $eq: [ "$$hotelId", "$_id" ]}]}}}
+                    ],
+                    as: "hotel"   
+                }},
+                {$unwind: "$hotel"},
+            ]))
+            if(room.length === 0) return next(createError(404, "Not Found"))
             res.status(200).json(room)
         }
         catch(err){
@@ -61,8 +72,28 @@ class RoomController{
     }
     async getRoomByHotel(req, res, next){
         try{
-            const room = await Room.find({hotel_id: req.params.id})
-            res.status(200).json(room)
+            const page = req.query.page || 1
+            const rooms = (await Room.aggregate([
+                {$match: {hotel_id:  mongoose.Types.ObjectId(req.params.id)}},
+                { $lookup: {
+                    from: "hotels",
+                    let: { hotelId: "$hotel_id"},
+                    pipeline: [
+                        {$match: {$expr: {$and: [{ $eq: [ "$$hotelId", "$_id" ]}]}}}
+                    ],
+                    as: "hotel"   
+                }},
+                {$unwind: "$hotel"},
+            ]))
+            if(rooms.length === 0) return next(createError(404, "Not Found"))
+
+            //PAGINATION
+            const availablePage = Math.ceil(rooms.length/process.env.PER_PAGE)
+            if(page>availablePage && rooms.length!==0){
+                return next(createError(404,"Not Found"))
+            }
+            const Rooms = pagination(rooms, page)
+            res.status(200).json({"rooms": Rooms, "availablePage": availablePage})
         }
         catch(err){
             next(err)
@@ -71,22 +102,38 @@ class RoomController{
     async getAllRoom(req, res, next){
 
         try{
-            const {maxPrice,minPrice, ...others} = req.query
+            const {maxPrice,minPrice} = req.query
             const column = req.query.column || "room_name"
             const sort = req.query.sort || 1
             const page = req.query.page || 1
             let roomType = req.query.room_type
             if(!roomType){
-                roomType = (await RoomType.find({})).map(room_type => {return room_type._id.toString()})
+                roomType = (await RoomType.find({})).map(room_type => {return room_type._id})
             }
             else{
-                roomType = (await RoomType.find({typeName: roomType})).map(room_type => room_type._id.toString())
+                roomType = (await RoomType.find({typeName: roomType})).map(room_type => room_type._id)
             }
-            const rooms = (await Room.find({
-                ...others,
-                current_price: { $gt: minPrice || 1, $lt: maxPrice || 99999999999 },
-                room_type_id: {$in: roomType}
-            }).sort({[column]: sort}))
+            const others = {}
+            if(req.query.floor){
+                others.floor = parseInt(req.query.floor)
+            }
+            if(req.query.maxPeople){
+                others.maxPeople = parseInt(req.query.maxPeople)
+            }
+            const rooms = (await Room.aggregate([
+                { $lookup: {
+                    from: "hotels",
+                    let: { hotelId: "$hotel_id"},
+                    pipeline: [
+                        {$match: {$expr: {$and: [{ $eq: [ "$$hotelId", "$_id" ]}]}}}
+                    ],
+                    as: "hotel"   
+                }},
+                {$unwind: "$hotel"},
+                {$match: {$expr: {$and: [{ $gt: [ "$current_price", parseInt(minPrice) || 1 ]}, {$lt: [ "$current_price", parseInt(maxPrice) || 9999999999999999 ]}, {$in: ["$room_type_id", roomType]}]}}},
+                {$match: {...others}},
+                {$sort: {[column]: sort}}
+            ]))
             const availablePage = Math.ceil(rooms.length/process.env.PER_PAGE)
             if(page>availablePage && rooms.length!==0){
                 return next(createError(404,"Not Found"))
@@ -103,16 +150,17 @@ class RoomController{
 
     async filterRoom(req, res, next){
         try{
-            const {minPrice, maxPrice, city, startDate, endDate,...others} = req.query
+            const {minPrice, maxPrice, city, startDate, endDate} = req.query
             const column = req.query.column || "room_name"
             const sort = req.query.sort || 1
             const page = req.query.page || 1
+            
             let roomType = req.query.room_type
             if(!roomType){
-                roomType = (await RoomType.find({})).map(room_type => {return room_type._id.toString()})
+                roomType = (await RoomType.find({})).map(room_type => {return room_type._id})
             }
             else{
-                roomType = (await RoomType.find({typeName: roomType})).map(room_type => room_type._id.toString())
+                roomType = (await RoomType.find({typeName: roomType})).map(room_type => room_type._id)
             }
             //FIND ROOMSERVED
             const roomServeds = await findRoomServed(startDate, endDate)
@@ -127,14 +175,29 @@ class RoomController{
                 return hotel._id.toString()
             })
             //FIND AVAILABLE ROOM
-            const availableRooms = (await Room.find({
-                ...others,
-                current_price: { $gt: minPrice | 1, $lt: maxPrice || 99999999999 },
-                room_type_id: {$in: roomType}
-            }).sort({[column]: sort})).filter((room)=>{
+            const others = {}
+            if(req.query.floor){
+                others.floor = parseInt(req.query.floor)
+            }
+            if(req.query.maxPeople){
+                others.maxPeople = parseInt(req.query.maxPeople)
+            }
+            const availableRooms = (await Room.aggregate([
+                { $lookup: {
+                    from: "hotels",
+                    let: { hotelId: "$hotel_id"},
+                    pipeline: [
+                        {$match: {$expr: {$and: [{ $eq: [ "$$hotelId", "$_id" ]}]}}}
+                    ],
+                    as: "hotel"   
+                }},
+                {$unwind: "$hotel"},
+                {$match: {$expr: {$and: [{ $gt: [ "$current_price", parseInt(minPrice) || 1 ]}, {$lt: [ "$current_price", parseInt(maxPrice) || 9999999999999999 ]}, {$in: ["$room_type_id", roomType]}]}}},
+                {$match: {...others}},
+                {$sort: {[column]: sort}}
+            ])).filter((room)=>{
                 return (!roomServedsId.includes(room._id.toString())) && (hotelsId.includes(room.hotel_id.toString()))
             })
-            
             //PAGINATION
             const availablePage = Math.ceil(availableRooms.length/process.env.PER_PAGE)
             if(page>availablePage && availableRooms.length!==0){
