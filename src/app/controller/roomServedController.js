@@ -39,8 +39,8 @@ class RoomController {
 
   async getRoomServed(req, res, next) {
     try {
-      const RoomServed = await RoomServed.findById(req.params.id);
-      res.status(200).json(RoomServed);
+      const servedRoom = await servedRoom.findById(req.params.id);
+      res.status(200).json(servedRoom);
     } catch (err) {
       next(err);
     }
@@ -48,8 +48,8 @@ class RoomController {
 
   async getAllRoomServed(req, res, next) {
     try {
-      const RoomServeds = await RoomServed.find();
-      res.status(200).json(RoomServeds);
+      const servedRooms = await RoomServed.find();
+      res.status(200).json(servedRooms);
     } catch (err) {
       next(err);
     }

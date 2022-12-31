@@ -1,4 +1,4 @@
-const ReservationCatelog = require("../models/reservationCatelog");
+const ReservationCatelog = require("../models/reservationCatalog");
 const ReservationEvent = require("../models/reservationStatusEvent");
 
 const updateSuccessReservation = async () => {

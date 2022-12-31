@@ -1,5 +1,3 @@
-//const { createError } = require('../../utils/error')
-
 const ReservationEvent = require("../models/reservationStatusEvent");
 const createError = require("../../utils/error");
 class ReservationEventController {

@@ -5,7 +5,7 @@ const hotelRoute = require("./hotels");
 const categoryRoute = require("./category");
 const reservationRoute = require("./reservation");
 const reservationEventsRoute = require("./reservationStatusEvent");
-const reservationCatelogRoute = require("./reservationCatelog");
+const reservationCatalogRoute = require("./reservationCatalog");
 const roomTypeRoute = require("./roomType");
 const roomServedRoute = require("./roomServed");
 const verify = require("../middleware/verifyToken");
@@ -19,7 +19,7 @@ const route = (app) => {
   app.use("/reservation", verify.verifyToken, reservationRoute);
   app.use("/roomServed", verify.verifyToken, roomServedRoute);
   app.use("/reservationStatus", verify.verifyToken, reservationEventsRoute);
-  app.use("/reservationCatelog", verify.verifyToken, reservationCatelogRoute);
+  app.use("/reservationCatalog", verify.verifyToken, reservationCatalogRoute);
   app.use("/roomType", verify.verifyToken, roomTypeRoute);
   app.use((err, req, res, next) => {
     errorStatus = err.status || 500;

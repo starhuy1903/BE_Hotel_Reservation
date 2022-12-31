@@ -2,7 +2,7 @@ const Reservation = require("../models/reservation");
 const createError = require("../../utils/error");
 const RoomServed = require("../models/roomServed");
 const ReservationEvent = require("../models/reservationStatusEvent");
-const ReservationCatelog = require("../models/reservationCatelog");
+const ReservationCatalog = require("../models/reservationCatalog");
 const { findRoomServed } = require("../service/room");
 const Room = require("../models/room");
 class ReservationController {
@@ -125,7 +125,7 @@ class ReservationController {
       });
       await roomServed.save();
 
-      const reservationCatelog = await ReservationCatelog.findOne({
+      const reservationCatelog = await ReservationCatalog.findOne({
         statusName: "pending",
       });
 

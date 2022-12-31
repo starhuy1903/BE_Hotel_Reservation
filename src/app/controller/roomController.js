@@ -4,22 +4,21 @@ const RoomType = require("../models/roomType");
 const { findRoomServed } = require("../service/room");
 const { pagination } = require("../service/site");
 const createError = require("../../utils/error");
-const { array } = require("joi");
 
 class RoomController {
   index(req, res) {
     res.send("Hello from room");
   }
-  async createRoom(req, res, next) {
+  createRoom = async (req, res, next) => {
     const newRoom = new Room({ ...req.body, hotel_id: req.params.id });
     try {
-      const savedroom = await newRoom.save();
-      res.status(200).json(savedroom);
+      const savedRoom = await newRoom.save();
+      res.status(200).json(savedRoom);
     } catch (err) {
       next(err);
     }
-  }
-  async updateRoom(req, res, next) {
+  };
+  updateRoom = async (req, res, next) => {
     try {
       const updatedRoom = await Room.findByIdAndUpdate(
         req.params.id,
@@ -31,9 +30,9 @@ class RoomController {
     } catch (err) {
       next(err);
     }
-  }
+  };
 
-  async deleteRoom(req, res, next) {
+  deleteRoom = async (req, res, next) => {
     try {
       const deletedRoom = await Room.findByIdAndDelete(req.params.id);
       if (!deletedRoom) return next(createError(404, "Not Found"));
@@ -41,9 +40,9 @@ class RoomController {
     } catch (err) {
       next(err);
     }
-  }
+  };
 
-  async getRoom(req, res, next) {
+  getRoom = async (req, res, next) => {
     try {
       const room = await Room.findById(req.params.id);
       if (!room) return next(createError(404, "Not Found"));
@@ -51,22 +50,37 @@ class RoomController {
     } catch (err) {
       next(err);
     }
-  }
-  async getRoomByHotel(req, res, next) {
+  };
+  getRoomByHotel = async (req, res, next) => {
     try {
       const room = await Room.find({ hotel_id: req.params.id });
       res.status(200).json(room);
     } catch (err) {
       next(err);
     }
-  }
-  async getAllRoom(req, res, next) {
+  };
+  getAllRoom = async (req, res, next) => {
     try {
       const { maxPrice, minPrice, ...others } = req.query;
       const column = req.query.column || "room_name";
       const sort = req.query.sort || 1;
       const page = req.query.page || 1;
       let roomType = req.query.room_type;
+      // write code to join 2 table Room and Hotel
+
+      const room = await Room.createView("room", "hotel", [
+        {
+          $lookup: {
+            from: "room",
+            localField: "hotel_id",
+            foreignField: "hotel_id",
+            as: "hotel_ref",
+          },
+        },
+      ]);
+
+      console.log(room);
+
       if (!roomType) {
         roomType = (await RoomType.find({})).map((room_type) => {
           return room_type._id.toString();
@@ -90,7 +104,38 @@ class RoomController {
     } catch (err) {
       next(err);
     }
-  }
+  };
+
+  getAllAvailableRoom = async (req, res, next) => {
+    try {
+      const column = req.query.column || "room_name";
+      const sort = req.query.sort || 1;
+      const page = req.query.page || 1;
+      let roomType = req.query.room_type;
+      if (!roomType) {
+        roomType = (await RoomType.find({})).map((roomType) => {
+          return roomType._id.toString();
+        });
+      } else {
+        roomType = (await RoomType.find({ typeName: roomType })).map(
+          (roomType) => roomType._id.toString()
+        );
+      }
+      const rooms = await Room.find({
+        ...others,
+        current_price: { $gt: minPrice || 1, $lt: maxPrice || 99999999999 },
+        room_type_id: { $in: roomType },
+      }).sort({ [column]: sort });
+      const availablePage = Math.ceil(rooms.length / process.env.PER_PAGE);
+      if (page > availablePage && rooms.length !== 0) {
+        return next(createError(404, "Not Found"));
+      }
+      const Rooms = pagination(rooms, page);
+      res.status(200).json({ rooms: Rooms, availablePage: availablePage });
+    } catch (err) {
+      next(err);
+    }
+  };
 
   async filterRoom(req, res, next) {
     try {
@@ -109,10 +154,10 @@ class RoomController {
           (room_type) => room_type._id.toString()
         );
       }
-      //FIND ROOMSERVED
-      const roomServeds = await findRoomServed(startDate, endDate);
-      //PARSE ROOMSERVED ID
-      const roomServedsId = roomServeds.map((roomServed) => {
+
+      const servedRooms = await findRoomServed(startDate, endDate);
+
+      const servedRoomIds = servedRooms.map((roomServed) => {
         return roomServed.roomId.toString();
       });
       //FIND HOTEL MATCH CITY
@@ -132,7 +177,7 @@ class RoomController {
         }).sort({ [column]: sort })
       ).filter((room) => {
         return (
-          !roomServedsId.includes(room._id.toString()) &&
+          !servedRoomIds.includes(room._id.toString()) &&
           hotelsId.includes(room.hotel_id.toString())
         );
       });

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const reservationCatelog = new Schema(
+const reservationCatalog = new Schema(
   {
     statusName: { type: String, required: true },
   },
@@ -9,6 +9,6 @@ const reservationCatelog = new Schema(
 );
 
 module.exports = mongoose.model(
-  "Reservation Status Catelog",
-  reservationCatelog
+  "Reservation Status Catalog",
+  reservationCatalog
 );

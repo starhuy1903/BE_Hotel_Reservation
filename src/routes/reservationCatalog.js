@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const reservationCatelogController = require("../app/controller/reservationCatelogController");
+const reservationCatalogController = require("../app/controller/reservationCatalogController");
 
 const verifyRoles = require("../middleware/verifyRoles");
 const ROLES_LIST = require("../config/allowedRoles");
@@ -9,35 +9,35 @@ const ROLES_LIST = require("../config/allowedRoles");
 router.delete(
   "/:id",
   verifyRoles(ROLES_LIST.Admin),
-  reservationCatelogController.deleteReservationCatelog
+  reservationCatalogController.deleteReservationCatalog
 );
 
 //UPDATE
 router.put(
   "/:id",
   verifyRoles(ROLES_LIST.Admin),
-  reservationCatelogController.updateReservationCatelog
+  reservationCatalogController.updateReservationCatalog
 );
 
 //GET
 router.get(
   "/:id",
   verifyRoles(ROLES_LIST.Admin),
-  reservationCatelogController.getReservationCatelog
+  reservationCatalogController.getReservationCatalog
 );
 
 //GETALL
 router.get(
   "/",
   verifyRoles(ROLES_LIST.Admin),
-  reservationCatelogController.getAllReservationCatelog
+  reservationCatalogController.getAllReservationCatalog
 );
 
 //CREATE
 router.post(
   "/",
   verifyRoles(ROLES_LIST.Admin),
-  reservationCatelogController.createReservationCatelog
+  reservationCatalogController.createReservationCatalog
 );
 
 module.exports = router;

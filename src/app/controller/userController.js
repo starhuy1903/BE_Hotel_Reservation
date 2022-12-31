@@ -146,14 +146,14 @@ class UserController {
 
       const salt = bcrypt.genSaltSync(10);
       const hash = bcrypt.hashSync(req.body.password, salt);
-      const updatedUser = await User.findByIdAndUpdate(
+      await User.findByIdAndUpdate(
         user._id,
         { password: hash },
         { new: true }
       );
       await token.remove();
 
-      res.status(200).json({ message: "Reset Password Succesfully" });
+      res.status(200).json({ message: "Reset Password Successfully" });
     } catch (err) {
       next(err);
     }
@@ -177,7 +177,7 @@ class UserController {
       );
       await token.remove();
 
-      res.status(200).json({ message: "Verify User Email Succesfully" });
+      res.status(200).json({ message: "Verify User Email Successfully" });
     } catch (err) {
       next(err);
     }
