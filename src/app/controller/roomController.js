@@ -48,6 +48,16 @@ class RoomController {
         { $match: { _id: mongoose.Types.ObjectId(req.params.id) } },
         {
           $lookup: {
+            from: "type rooms",
+            let: { typeRoom: "$room_type_id" },
+            pipeline: [
+              { $match: { $expr: { $and: [{ $eq: ["$$typeRoom", "$_id"] }] } } },
+            ],
+            as: "roomType",
+          },
+        },
+        {
+          $lookup: {
             from: "hotels",
             let: { hotelId: "$hotel_id" },
             pipeline: [
@@ -75,6 +85,16 @@ class RoomController {
       const page = req.query.page || 1;
       const rooms = await Room.aggregate([
         { $match: { hotel_id: mongoose.Types.ObjectId(req.params.id) } },
+        {
+          $lookup: {
+            from: "type rooms",
+            let: { typeRoom: "$room_type_id" },
+            pipeline: [
+              { $match: { $expr: { $and: [{ $eq: ["$$typeRoom", "$_id"] }] } } },
+            ],
+            as: "roomType",
+          },
+        },
         {
           $lookup: {
             from: "hotels",
@@ -135,6 +155,16 @@ class RoomController {
             as: "hotel",
           },
         },
+        {
+          $lookup: {
+            from: "type rooms",
+            let: { typeRoom: "$room_type_id" },
+            pipeline: [
+              { $match: { $expr: { $and: [{ $eq: ["$$typeRoom", "$_id"] }] } } },
+            ],
+            as: "roomType",
+          },
+        },
         { $unwind: "$hotel" },
         {
           $match: {
@@ -153,7 +183,7 @@ class RoomController {
           },
         },
         { $match: { ...others } },
-        { $sort: { [column]: sort } },
+        { $sort: { [column]: parseInt(sort) } },
       ]);
       const availablePage = Math.ceil(rooms.length / process.env.PER_PAGE);
       if (page > availablePage && rooms.length !== 0) {
@@ -215,6 +245,16 @@ class RoomController {
         await Room.aggregate([
           {
             $lookup: {
+              from: "type rooms",
+              let: { typeRoom: "$room_type_id" },
+              pipeline: [
+                { $match: { $expr: { $and: [{ $eq: ["$$typeRoom", "$_id"] }] } } },
+              ],
+              as: "roomType",
+            },
+          },
+          {
+            $lookup: {
               from: "hotels",
               let: { hotelId: "$hotel_id" },
               pipeline: [
@@ -243,7 +283,7 @@ class RoomController {
             },
           },
           { $match: { ...others } },
-          { $sort: { [column]: sort } },
+          { $sort: { [column]: parseInt(sort) } },
         ])
       ).filter((room) => {
         return (

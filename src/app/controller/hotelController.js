@@ -45,8 +45,21 @@ class HotelController {
 
   async getHotel(req, res, next) {
     try {
-      const hotel = await Hotel.findById(req.params.id);
-      if (!hotel) return next(createError(404, "Not Found"));
+      const hotel = await Hotel.aggregate([
+        { $match: { _id: mongoose.Types.ObjectId(req.params.id) } },
+        {
+          $lookup: {
+            from: "categories",
+            let: { categoryId: "$category_id" },
+            pipeline: [
+              { $match: { $expr: { $and: [{ $eq: ["$$categoryId", "$_id"] }] } } },
+            ],
+            as: "category",
+          },
+        },
+        { $unwind: "$category" },
+      ]);
+      if (hotel.length === 0) return next(createError(404, "Not Found"));
       res.status(200).json(hotel);
     } catch (err) {
       next(err);
@@ -55,25 +68,52 @@ class HotelController {
 
   async getAllHotel(req, res, next) {
     try {
-      const { maxPrice, minPrice, ...others } = req.query;
+      const { maxPrice, minPrice} = req.query;
       const column = req.query.column || "name";
       const sort = req.query.sort || 1;
       const page = req.query.page || 1;
       let category = req.query.category;
       if (!category) {
         category = (await Category.find({})).map((category) => {
-          return category._id.toString();
+          return category._id
         });
       } else {
         category = (await Category.find({ category_name: category })).map(
-          (category) => category._id.toString()
+          (category) => category._id
         );
       }
-      const availableHotels = await Hotel.find({
-        ...others,
-        cheapest_price: { $gt: minPrice || 1, $lt: maxPrice || 99999999999 },
-        category_id: { $in: category },
-      }).sort({ [column]: sort });
+
+
+      const availableHotels = await Hotel.aggregate([
+        {
+          $lookup: {
+            from: "categories",
+            let: { categoryId: "$category_id" },
+            pipeline: [
+              { $match: { $expr: { $and: [{ $eq: ["$$categoryId", "$_id"] }] } } },
+            ],
+            as: "category",
+          },
+        },
+        { $unwind: "$category" },
+        {
+          $match: {
+            $expr: {
+              $and: [
+                { $gt: ["$cheapest_price", parseInt(minPrice) || 1] },
+                {
+                  $lt: [
+                    "$cheapest_price",
+                    parseInt(maxPrice) || 9999999999999999,
+                  ],
+                },
+                { $in: ["$category_id", category] },
+              ],
+            },
+          },
+        },
+        { $sort: {[column]: parseInt(sort) }},
+      ]);
 
       const availablePage = Math.ceil(
         availableHotels.length / process.env.PER_PAGE
@@ -136,11 +176,11 @@ class HotelController {
       let category = req.query.category;
       if (!category) {
         category = (await Category.find({})).map((category) => {
-          return category._id.toString();
+          return category._id;
         });
       } else {
         category = (await Category.find({ category_name: category })).map(
-          (category) => category._id.toString()
+          (category) => category._id
         );
       }
       //FIND ROOM SERVED
@@ -170,16 +210,38 @@ class HotelController {
       }
 
       //FIND AVAILABLE HOTEL
-      const availableHotels = (
-        await Hotel.find({
-          ...others,
-          cheapest_price: { $gt: minPrice | 1, $lt: maxPrice || 99999999999 },
-          category_id: { $in: category },
-        }).sort({ [column]: sort })
-      ).filter((hotel) => {
+      const availableHotels = (await Hotel.aggregate([
+        {
+          $lookup: {
+            from: "categories",
+            let: { categoryId: "$category_id" },
+            pipeline: [
+              { $match: { $expr: { $and: [{ $eq: ["$$categoryId", "$_id"] }] } } },
+            ],
+            as: "category",
+          },
+        },
+        { $unwind: "$category" },
+        {
+          $match: {
+            $expr: {
+              $and: [
+                { $gt: ["$cheapest_price", parseInt(minPrice) || 1] },
+                {
+                  $lt: [
+                    "$cheapest_price",
+                    parseInt(maxPrice) || 9999999999999999,
+                  ],
+                },
+                { $in: ["$category_id", category] },
+              ],
+            },
+          },
+        },
+        { $sort: {[column]: parseInt(sort) }},
+      ])).filter((hotel) => {
         return availableHotelsId.includes(hotel._id.toString());
-      });
-
+      })
       //PAGINATION
       const availablePage = Math.ceil(
         availableHotels.length / process.env.PER_PAGE
