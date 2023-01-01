@@ -10,9 +10,6 @@ const fileUploader = require("../config/cloudinary");
 //FIND ROOM BY HOTEL
 router.get("/hotel/:id", roomController.getRoomByHotel);
 
-//FIND ROOM BY HOTEL
-router.get("/hotel/:id", roomController.getRoomByHotel);
-
 //FIND ROOM BY CITY
 router.get("/filter", roomController.filterRoom);
 

@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const hotelController = require("../app/controller/hotelController");
+const roomController = require("../app/controller/roomController");
 const verify = require("../middleware/verifyToken");
 const { verifyBusiness } = require("../middleware/verifyUser");
 const verifyRoles = require("../middleware/verifyRoles");
@@ -54,5 +55,8 @@ router.post(
   fileUploader.array("file"),
   hotelController.createHotel
 );
+
+//FIND ALL ROOM BY HOTEL
+router.get("/:id/room", roomController.getRoomByHotel);
 
 module.exports = router;
