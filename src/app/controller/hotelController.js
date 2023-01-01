@@ -60,7 +60,7 @@ class HotelController {
         { $unwind: "$category" },
       ]);
       if (hotel.length === 0) return next(createError(404, "Not Found"));
-      res.status(200).json(hotel);
+      res.status(200).json(hotel[0]);
     } catch (err) {
       next(err);
     }
