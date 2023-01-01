@@ -1,13 +1,13 @@
-const User = require("../models/user")
-const verifyToken = require("../models/token")
-const bcrypt = require('bcryptjs')
-const createError = require("../../utils/error")
-const ROLES_LIST = require("../../config/allowedRoles")
-const {getHistory} = require("../service/History")
-class UserController{
-    index (req,res){
-        res.send("Hello from user")
-    }
+const User = require("../models/user");
+const verifyToken = require("../models/token");
+const bcrypt = require("bcryptjs");
+const createError = require("../../utils/error");
+const ROLES_LIST = require("../../config/allowedRoles");
+const { getHistory } = require("../service/History");
+class UserController {
+  index(req, res) {
+    res.send("Hello from user");
+  }
 
   async createUser(req, res, next) {
     try {
@@ -38,33 +38,32 @@ class UserController{
       next(err);
     }
   }
-  async updateUser(req, res, next) {
+  updateUser = async (req, res, next) => {
     try {
-      if (req.user.id !== req.params.id)
-        return next(createError(403, "You're not authorized"));
+      if (req.user.id) return next(createError(403, "You're not authorized"));
       const { username, email, roles, verified } = req.body;
       if (username || email || roles || verified)
         return next(createError(400, "Bad Request"));
       if (!req.body.password) {
-        const updatedUser = await User.findByIdAndUpdate(
-          req.params.id,
+        await User.findByIdAndUpdate(
+          req.user.id,
           { $set: req.body },
           { new: true }
         );
-        res.status(200).json(updatedUser);
+        res.status(200).json({ message: "User Profile has been updated" });
       }
       const salt = bcrypt.genSaltSync(10);
       const hash = bcrypt.hashSync(req.body.password, salt);
-      const updatedUser = await User.findByIdAndUpdate(
-        req.params.id,
+      await User.findByIdAndUpdate(
+        req.user.id,
         { $set: req.body, password: hash },
         { new: true }
       );
-      res.status(200).json({ message: "User has been updated" });
+      res.status(200).json({ message: "User Profile has been updated" });
     } catch (err) {
       next(err);
     }
-  }
+  };
 
   async updateUserByAdmin(req, res, next) {
     try {
@@ -146,11 +145,7 @@ class UserController{
 
       const salt = bcrypt.genSaltSync(10);
       const hash = bcrypt.hashSync(req.body.password, salt);
-      await User.findByIdAndUpdate(
-        user._id,
-        { password: hash },
-        { new: true }
-      );
+      await User.findByIdAndUpdate(user._id, { password: hash }, { new: true });
       await token.remove();
 
       res.status(200).json({ message: "Reset Password Successfully" });
@@ -182,28 +177,24 @@ class UserController{
       next(err);
     }
   }
-    async getUserProfile(req, res, next){
-      try{
-            const user = await User.findOne({_id: req.user.id})
-            if(!user) return next(createError(400,"Not Found"))
-            const {password,roles, ...otherDetails} = user._doc
-            res.status(200).json(otherDetails)
-            
-        }
-        catch(err){
-            next(err)
-        }
+  async getUserProfile(req, res, next) {
+    try {
+      const user = await User.findOne({ _id: req.user.id });
+      if (!user) return next(createError(400, "Not Found"));
+      const { password, roles, ...otherDetails } = user._doc;
+      res.status(200).json(otherDetails);
+    } catch (err) {
+      next(err);
     }
-    async getUserHistory(req, res, next){
-        try{
-            const history = await getHistory(req.user.id)
-            res.status(200).json(history)
-            
-        }
-        catch(err){
-            next(err)
-        }
+  }
+  async getUserHistory(req, res, next) {
+    try {
+      const history = await getHistory(req.user.id);
+      res.status(200).json(history);
+    } catch (err) {
+      next(err);
     }
+  }
 }
 
 module.exports = new UserController();

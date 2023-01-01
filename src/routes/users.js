@@ -32,7 +32,7 @@ router.delete(
 );
 
 //UPDATE
-router.put("/:id", verifyRoles(ROLES_LIST.User), userController.updateUser);
+router.put("/me", verifyRoles(ROLES_LIST.User), userController.updateUser);
 
 //GET
 router.get(
