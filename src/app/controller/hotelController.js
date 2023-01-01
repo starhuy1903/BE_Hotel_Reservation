@@ -83,7 +83,10 @@ class HotelController {
         );
       }
 
-
+      const others = {}
+      if(req.query.city){
+        others.city=req.query.city
+      }
       const availableHotels = await Hotel.aggregate([
         {
           $lookup: {
@@ -112,6 +115,7 @@ class HotelController {
             },
           },
         },
+        { $match: { ...others }},
         { $sort: {[column]: parseInt(sort) }},
       ]);
 
@@ -166,7 +170,7 @@ class HotelController {
 
   async filterHotel(req, res, next) {
     try {
-      const { maxPrice, minPrice, startDate, endDate, ...others } = req.query;
+      const { maxPrice, minPrice, startDate, endDate} = req.query;
       const numPeople = req.query.numPeople || -1;
       const column = req.query.column || "name";
       const sort = req.query.sort || 1;
@@ -210,6 +214,10 @@ class HotelController {
       }
 
       //FIND AVAILABLE HOTEL
+      const others = {}
+      if(req.query.city){
+        others.city=req.query.city
+      }
       const availableHotels = (await Hotel.aggregate([
         {
           $lookup: {
@@ -238,6 +246,7 @@ class HotelController {
             },
           },
         },
+        { $match: { ...others }},
         { $sort: {[column]: parseInt(sort) }},
       ])).filter((hotel) => {
         return availableHotelsId.includes(hotel._id.toString());
