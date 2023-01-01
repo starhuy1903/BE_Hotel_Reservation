@@ -4,12 +4,10 @@ const RoomType = require("../models/roomType");
 const { findRoomServed } = require("../service/room");
 const { pagination } = require("../service/site");
 const createError = require("../../utils/error");
+const mongoose = require('mongoose');
 
 class RoomController {
-  index(req, res) {
-    res.send("Hello from room");
-  }
-  async createRoom(req, res, next) {
+  createRoom = async (req, res, next) => {
     const newRoom = new Room({ ...req.body, hotel_id: req.params.id });
     try {
       const savedRoom = await newRoom.save();
@@ -17,8 +15,9 @@ class RoomController {
     } catch (err) {
       next(err);
     }
-  }
-  async updateRoom(req, res, next) {
+  };
+
+  updateRoom = async (req, res, next) => {
     try {
       const updatedRoom = await Room.findByIdAndUpdate(
         req.params.id,
@@ -30,9 +29,9 @@ class RoomController {
     } catch (err) {
       next(err);
     }
-  }
+  };
 
-  async deleteRoom(req, res, next) {
+  deleteRoom = async (req, res, next) => {
     try {
       const deletedRoom = await Room.findByIdAndDelete(req.params.id);
       if (!deletedRoom) return next(createError(404, "Not Found"));
@@ -40,11 +39,11 @@ class RoomController {
     } catch (err) {
       next(err);
     }
-  }
+  };
 
-  async getRoom(req, res, next) {
+  getRoomById = async (req, res, next) => {
     try {
-      const rooms = await Room.aggregate([
+      const room = await Room.aggregate([
         { $match: { _id: mongoose.Types.ObjectId(req.params.id) } },
         {
           $lookup: {
@@ -58,19 +57,16 @@ class RoomController {
         },
         { $unwind: "$hotel" },
       ]);
-      if (rooms.length === 0) return next(createError(404, "Not Found"));
+      if (room.length === 0) return next(createError(404, "Not Found"));
 
-      const roomRes = rooms.map((room) => {
-        const { hotel_id, ...others } = room;
-        return { ...others };
-      });
-
-      res.status(200).json(roomRes);
+      res.status(200).json(room[0]);
     } catch (err) {
+      console.log(err);
       next(err);
     }
-  }
-  async getRoomByHotel(req, res, next) {
+  };
+
+  getRoomByHotel = async (req, res, next) => {
     try {
       const page = req.query.page || 1;
       const rooms = await Room.aggregate([
@@ -99,9 +95,9 @@ class RoomController {
     } catch (err) {
       next(err);
     }
-  }
+  };
 
-  async getAllAvailableRoom(req, res, next) {
+  getAllAvailableRoom = async (req, res, next) => {
     try {
       const { maxPrice, minPrice } = req.query;
       const column = req.query.column || "room_name";
@@ -170,9 +166,9 @@ class RoomController {
     } catch (err) {
       next(err);
     }
-  }
+  };
 
-  async filterRoom(req, res, next) {
+  filterRoom = async (req, res, next) => {
     try {
       const { minPrice, maxPrice, city, startDate, endDate } = req.query;
       const column = req.query.column || "room_name";
@@ -263,7 +259,7 @@ class RoomController {
     } catch (err) {
       next(err);
     }
-  }
+  };
 }
 
 module.exports = new RoomController();

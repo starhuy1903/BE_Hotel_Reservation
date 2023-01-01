@@ -35,7 +35,7 @@ router.delete(
 );
 
 //GET
-router.get("/:id", roomController.getRoom);
+router.get("/:id", roomController.getRoomById);
 
 //CREATE
 router.post(

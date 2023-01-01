@@ -12,10 +12,7 @@ const redis = require("../../config/redis");
 const ROLES_LIST = require("../../config/allowedRoles");
 
 class AuthController {
-  index(req, res) {
-    res.send("Hello from auth");
-  }
-  async register(req, res, next) {
+  register = async (req, res, next) => {
     try {
       //VALIDATE
       const schema = Joi.object({
@@ -68,9 +65,9 @@ class AuthController {
     } catch (err) {
       next(err);
     }
-  }
+  };
 
-  async login(req, res, next) {
+  login = async (req, res, next) => {
     try {
       if (!req.body.username) {
         return next(createError(500, "Username is required"));
@@ -121,8 +118,8 @@ class AuthController {
     } catch (err) {
       next(err);
     }
-  }
-  async sendEmailResetPassword(req, res, next) {
+  };
+  sendEmailResetPassword = async (req, res, next) => {
     try {
       const schema = Joi.object({ email: Joi.string().email().required() });
       const { error } = schema.validate(req.body);
@@ -147,9 +144,9 @@ class AuthController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async refreshToken(req, res, next) {
+  refreshToken = async (req, res, next) => {
     try {
       const token = jwt.sign(
         { id: req.user.id, roles: req.user.roles },
@@ -161,12 +158,11 @@ class AuthController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async logout(req, res, next) {
+  logout = async (req, res, next) => {
     try {
       res.clearCookie("accessToken");
-
       res.clearCookie("refreshToken");
       redis.del(req.user.id.toString(), (err, reply) => {
         if (err) return next(createError(500, "Internal Server"));
@@ -175,7 +171,7 @@ class AuthController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 }
 
 module.exports = new AuthController();

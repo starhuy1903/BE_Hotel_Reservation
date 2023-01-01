@@ -43,7 +43,7 @@ class HotelController {
     }
   }
 
-  async getHotel(req, res, next) {
+  getHotel = async (req, res, next) => {
     try {
       const hotel = await Hotel.findById(req.params.id);
       if (!hotel) return next(createError(404, "Not Found"));
@@ -124,16 +124,18 @@ class HotelController {
     }
   }
 
-  async filterHotel(req, res, next) {
+   filterHotel = async (req, res, next) => {
     try {
-      const { maxPrice, minPrice, startDate, endDate, ...others } = req.query;
+      const { maxPrice, minPrice, startDate, endDate } = req.query;
       const numPeople = req.query.numPeople || -1;
       const column = req.query.column || "name";
       const sort = req.query.sort || 1;
       const page = req.query.page || 1;
       const groupBy = (x, f) =>
         x.reduce((a, b, i) => ((a[f(b, i, x)] ||= []).push(b), a), {});
+
       let category = req.query.category;
+
       if (!category) {
         category = (await Category.find({})).map((category) => {
           return category._id.toString();
@@ -143,17 +145,18 @@ class HotelController {
           (category) => category._id.toString()
         );
       }
+
       //FIND ROOM SERVED
-      const roomServeds = await findRoomServed(startDate, endDate);
+      const servedRooms = await findRoomServed(startDate, endDate);
 
       //PARSE ROOMSERVED ID
-      const roomServedsId = roomServeds.map((roomServed) => {
+      const servedRoomIds = servedRooms.map((roomServed) => {
         return roomServed.roomId.toString();
       });
 
       //FIND AVAILABLE ROOM
       const availableRooms = (await Room.find({})).filter((room) => {
-        return !roomServedsId.includes(room._id.toString());
+        return !servedRoomIds.includes(room._id.toString());
       });
 
       //FIND AVAILABLE HOTEL ID
@@ -188,11 +191,12 @@ class HotelController {
         return next(createError(404, "Not Found"));
       }
       const hotels = pagination(availableHotels, page);
-      res.status(200).json({ hotels: hotels, availablePage: availablePage });
+      res.status(200).json({ hotels, availablePage });
     } catch (err) {
       next(err);
     }
   }
+
   async getHotelByBusiness(req, res, next) {
     try {
       const userId = new mongoose.Types.ObjectId(req?.user?.id);
