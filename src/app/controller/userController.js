@@ -40,7 +40,7 @@ class UserController {
   }
   updateUser = async (req, res, next) => {
     try {
-      if (req.user.id) return next(createError(403, "You're not authorized"));
+      if (!req.user.id) return next(createError(403, "You're not authorized"));
       const { username, email, roles, verified } = req.body;
       if (username || email || roles || verified)
         return next(createError(400, "Bad Request"));
