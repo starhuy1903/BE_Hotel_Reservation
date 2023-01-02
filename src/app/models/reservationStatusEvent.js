@@ -11,6 +11,6 @@ const reservationStatusEventSchema = new Schema(
 );
 
 module.exports = mongoose.model(
-  "ReservationStatusEvent",
+  "reservation_status_event",
   reservationStatusEventSchema
 );

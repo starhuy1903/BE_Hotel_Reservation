@@ -1,6 +1,6 @@
 const Reservation = require("../models/reservation");
 const createError = require("../../utils/error");
-const RoomServed = require("../models/roomServed");
+const RoomServed = require("../models/servedRoom");
 const ReservationEvent = require("../models/reservationStatusEvent");
 const ReservationCatalog = require("../models/reservationCatalog");
 const { findRoomServed } = require("../service/room");
@@ -76,7 +76,7 @@ class ReservationController {
     }
   }
 
-  async reservation(req, res, next) {
+  reservation = async (req, res, next) => {
     try {
       const { startDate, endDate, roomId } = req.body;
       if (!startDate || !endDate || !roomId)
@@ -84,19 +84,11 @@ class ReservationController {
       const userId = req.user.id;
       const discountPercent = req.body.discountPercent || 0;
 
-      const roomServeds = (await findRoomServed(startDate, endDate)).map(
-        (roomServed) => {
-          return roomServed.roomId.toString();
-        }
+      const servedRooms = (await findRoomServed(startDate, endDate)).map(
+        (roomServed) => roomServed.roomId.toString()
       );
 
-      if (
-        roomServeds
-          .map((roomServed) => {
-            return roomServed.roomId.toString();
-          })
-          .includes(roomId)
-      ) {
+      if (servedRooms.includes(roomId)) {
         return next(createError(400, "Room has been served"));
       }
 
@@ -109,38 +101,41 @@ class ReservationController {
 
       //CREATE NEW RESERVATION
       const reservation = new Reservation({
-        startDate: startDate,
-        endDate: endDate,
-        userId: userId,
-        discountPercent: discountPercent,
-        totalPrice: totalPrice,
+        startDate,
+        endDate,
+        userId,
+        discountPercent,
+        totalPrice,
       });
       await reservation.save();
 
-      //CREATE NEW ROOMSERVED
+      //create new served room
       const roomServed = new RoomServed({
-        roomId: roomId,
+        roomId,
         reservationId: reservation._id,
         price: totalPrice,
       });
       await roomServed.save();
 
-      const reservationCatelog = await ReservationCatalog.findOne({
-        statusName: "pending",
+      const reservationCatalog = await ReservationCatalog.findOne({
+        statusName: "pending"
       });
+
+      console.log()
 
       //CREATE NEW RESERVATION EVENT
       const reservationEvent = new ReservationEvent({
         reservationId: reservation._id,
-        reservationStatusCatalogId: reservationCatelog._id,
+        reservationStatusCatalogId: reservationCatalog._id,
         details: "pending",
       });
       await reservationEvent.save();
       res.status(200).json(reservation);
     } catch (err) {
+      console.log(err);
       next(err);
     }
-  }
+  };
 }
 
 module.exports = new ReservationController();

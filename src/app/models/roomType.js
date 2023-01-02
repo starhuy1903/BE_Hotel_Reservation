@@ -5,4 +5,4 @@ const typeRoomSchema = new Schema({
   typeName: { type: String, required: true },
 });
 
-module.exports = mongoose.model("Type Room", typeRoomSchema);
+module.exports = mongoose.model("room_type ", typeRoomSchema);

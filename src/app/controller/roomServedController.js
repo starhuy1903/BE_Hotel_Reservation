@@ -1,4 +1,4 @@
-const RoomServed = require("../models/roomServed");
+const RoomServed = require("../models/servedRoom");
 
 class RoomController {
   index(req, res) {

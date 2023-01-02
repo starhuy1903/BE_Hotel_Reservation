@@ -1,4 +1,4 @@
-const RoomServed = require("../models/roomServed");
+const RoomServed = require("../models/servedRoom");
 
 const findRoomServed = (startDate, endDate) => {
   const servedRoom = RoomServed.aggregate([

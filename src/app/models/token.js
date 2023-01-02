@@ -13,4 +13,4 @@ verifyTokenSchema.index(
   { createdAt: 1 },
   { expireAfterSeconds: 3600 * 24 * 5 }
 );
-module.exports = mongoose.model("verifyToken", verifyTokenSchema);
+module.exports = mongoose.model("verify_token", verifyTokenSchema);

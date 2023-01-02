@@ -177,7 +177,7 @@ class UserController {
       next(err);
     }
   }
-  async getUserProfile(req, res, next) {
+  getUserProfile = async (req, res, next) => {
     try {
       const user = await User.findOne({ _id: req.user.id });
       if (!user) return next(createError(400, "Not Found"));
@@ -186,15 +186,16 @@ class UserController {
     } catch (err) {
       next(err);
     }
-  }
-  async getUserHistory(req, res, next) {
+  };
+
+  getUserHistory = async (req, res, next) => {
     try {
       const history = await getHistory(req.user.id);
       res.status(200).json(history);
     } catch (err) {
       next(err);
     }
-  }
+  };
 }
 
 module.exports = new UserController();

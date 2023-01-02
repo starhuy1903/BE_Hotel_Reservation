@@ -9,6 +9,6 @@ const reservationCatalog = new Schema(
 );
 
 module.exports = mongoose.model(
-  "Reservation Status Catalog",
+  "reservation_status_catalog",
   reservationCatalog
 );
