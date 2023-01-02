@@ -24,7 +24,7 @@ const findRoomServed = (startDate, endDate) => {
           },
           {
             $lookup: {
-              from: "reservationstatusevents",
+              from: "reservation_status_events",
               let: { reservationId: "$_id" },
               pipeline: [
                 {
@@ -36,7 +36,7 @@ const findRoomServed = (startDate, endDate) => {
                 },
                 {
                   $lookup: {
-                    from: "reservation status catelogs",
+                    from: "reservation_status_catalogs",
                     let: {
                       reservationCatelogId: "$reservationStatusCatalogId",
                     },
@@ -57,15 +57,15 @@ const findRoomServed = (startDate, endDate) => {
                         },
                       },
                     ],
-                    as: "reservation status catelog",
+                    as: "reservation_status_catalog",
                   },
                 },
-                { $unwind: "$reservation status catelog" },
+                { $unwind: "$reservation_status_catalog" },
               ],
-              as: "reservation status",
+              as: "reservation_status",
             },
           },
-          { $unwind: "$reservation status" },
+          { $unwind: "$reservation_status" },
         ],
         as: "reservation",
       },

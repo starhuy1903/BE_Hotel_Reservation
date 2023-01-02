@@ -87,7 +87,6 @@ class ReservationController {
       const servedRooms = (await findRoomServed(startDate, endDate)).map(
         (roomServed) => roomServed.roomId.toString()
       );
-
       if (servedRooms.includes(roomId)) {
         return next(createError(400, "Room has been served"));
       }
@@ -121,7 +120,6 @@ class ReservationController {
         statusName: "pending"
       });
 
-      console.log()
 
       //CREATE NEW RESERVATION EVENT
       const reservationEvent = new ReservationEvent({
