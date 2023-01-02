@@ -41,10 +41,10 @@ class UserController {
   updateUser = async (req, res, next) => {
     try {
       if (!req.user.id) return next(createError(403, "You're not authorized"));
-      const { username, email, roles, verified } = req.body;
-      if (username || email || roles || verified)
+      const { username, email, roles, verified, password } = req.body;
+      if (username || email || roles || verified || password)
         return next(createError(400, "Bad Request"));
-      if (!req.body.password) {
+      if (!req.body.newPassword) {
         await User.findByIdAndUpdate(
           req.user.id,
           { $set: req.body },
@@ -52,14 +52,27 @@ class UserController {
         );
         res.status(200).json({ message: "User Profile has been updated" });
       }
-      const salt = bcrypt.genSaltSync(10);
-      const hash = bcrypt.hashSync(req.body.password, salt);
-      await User.findByIdAndUpdate(
-        req.user.id,
+      else{
+        const user = await User.findOne({ _id: req.user.id });
+        if (!user) return next(createError(404, "Username Not Found "));
+        if (!req.body.oldPassword) return next(createError(400, "Bad Request"));
+
+        const isPasswordCorrect = await bcrypt.compare(
+          req.body.oldPassword,
+          user.password
+        );
+        if (!isPasswordCorrect)
+          return next(createError(400, "Wrong password"));
+        const salt = bcrypt.genSaltSync(10);
+        const hash = bcrypt.hashSync(req.body.password, salt);
+        await User.findByIdAndUpdate(
+          req.user.id,
         { $set: req.body, password: hash },
         { new: true }
       );
       res.status(200).json({ message: "User Profile has been updated" });
+      }
+      
     } catch (err) {
       next(err);
     }
@@ -69,20 +82,26 @@ class UserController {
     try {
       const user = await User.findOne({ _id: req.params.id });
       if (!user) return next(createError(404, "Not Found"));
+      let roles = [];
+      if(req.body.roles){
+        for (let role of req.body.roles) {
+          for (let key in ROLES_LIST) {
+            if (role === key) roles.push(ROLES_LIST[key]);
+          }
+        }
+      }
+      else{
+        roles = user.roles;
+      }
       if (!req.body.password) {
         const updatedUser = await User.findByIdAndUpdate(
           req.params.id,
-          { $set: req.body },
+          { $set: req.body, roles},
           { new: true }
         );
         res.status(200).json(updatedUser);
       }
-      let roles = [];
-      for (let role of req.body.roles) {
-        for (let key in ROLES_LIST) {
-          if (role === key) roles.push(ROLES_LIST[key]);
-        }
-      }
+      
       const salt = bcrypt.genSaltSync(10);
       const hash = bcrypt.hashSync(req.body.password, salt);
       const updatedUser = await User.findByIdAndUpdate(
