@@ -131,7 +131,12 @@ class HotelController{
             const column = req.query.column || "name"
             const sort = req.query.sort || 1
             const page = req.query.page || 1
-            const groupBy = (x,f)=>{x.reduce((a,b,i)=>((a[f(b,i,x)]||[]).push(b),a),{})}
+            const groupBy1 = function(xs, key) {
+                return xs.reduce(function(rv, x) {
+                  (rv[x[key]] = rv[x[key]] || []).push(x);
+                  return rv;
+                }, {});
+              };
             let category = req.query.category
             if(!category){
                 category = (await Category.find({})).map(category => {return category._id.toString()})
@@ -151,9 +156,9 @@ class HotelController{
             const availableRooms = (await Room.find({})).filter((room)=>{
                 return (!roomServedsId.includes(room._id.toString()))
             })
-
+            //console.log(availableRooms)
             //FIND AVAILABLE HOTEL ID
-            const groupByHotels = groupBy(availableRooms, (v)=> v.hotel_id)
+            const groupByHotels = groupBy1(availableRooms, "hotel_id")
             const availableHotelsId = []
             for(let hotel in groupByHotels){
                 let maxPeople = 0
