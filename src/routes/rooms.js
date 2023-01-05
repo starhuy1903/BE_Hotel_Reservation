@@ -31,9 +31,6 @@ router.delete(
   roomController.deleteRoom
 );
 
-//GET
-router.get("/:id", roomController.getRoomById);
-
 //CREATE
 router.post(
   "/:id",

@@ -8,6 +8,11 @@ const verifyRoles = require("../middleware/verifyRoles");
 const ROLES_LIST = require("../config/allowedRoles");
 const fileUploader = require("../config/cloudinary");
 
+
+//GET
+router.get("/:hotelId/:id", roomController.getRoomById);
+
+
 //COUNT HOTEL
 router.get("/count/ByCity", hotelController.countByCity);
 router.get("/count/ByType", hotelController.countByType);
@@ -19,6 +24,7 @@ router.get(
   verifyRoles(ROLES_LIST.Business),
   hotelController.getHotelByBusiness
 );
+
 
 //FILTER HOTEL
 router.get("/filter", hotelController.filterHotel);
