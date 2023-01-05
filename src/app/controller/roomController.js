@@ -83,7 +83,6 @@ class RoomController {
 
       //FIND ROOMSERVED
       const servedRoom = await findRoomServed(startDate, endDate);
-      console.log(servedRoom)
       //PARSE ROOMSERVED ID
       const servedRoomIds = servedRoom.map((roomServed) => {
         return roomServed.roomId.toString();

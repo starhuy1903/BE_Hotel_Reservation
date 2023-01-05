@@ -95,8 +95,8 @@ class ReservationController {
       if (!room) return next(createError(404, "Room does not exist"));
 
       const totalPrice =
-        ((new Date(endDate) - new Date(startDate)) / (10 ** 3 * 60 * 60 * 24)) *
-        room.current_price;
+        (((new Date(endDate) - new Date(startDate)) / (10 ** 3 * 60 * 60 * 24)) *
+        room.current_price) *((100-parseInt(discountPercent))/100);
 
       //CREATE NEW RESERVATION
       const reservation = new Reservation({

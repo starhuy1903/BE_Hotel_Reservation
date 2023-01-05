@@ -64,7 +64,7 @@ class UserController {
         if (!isPasswordCorrect)
           return next(createError(400, "Wrong password"));
         const salt = bcrypt.genSaltSync(10);
-        const hash = bcrypt.hashSync(req.body.password, salt);
+        const hash = bcrypt.hashSync(req.body.newPassword, salt);
         await User.findByIdAndUpdate(
           req.user.id,
         { $set: req.body, password: hash },

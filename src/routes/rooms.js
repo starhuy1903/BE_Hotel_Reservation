@@ -13,6 +13,9 @@ router.get("/hotel/:id", roomController.getRoomByHotel);
 //FIND ROOM BY CITY
 router.get("/filter", roomController.filterRoom);
 
+//GET
+router.get("/:id", roomController.getRoomById);
+
 //UPDATE
 router.put(
   "/:id",

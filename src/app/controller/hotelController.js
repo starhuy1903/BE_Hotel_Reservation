@@ -176,7 +176,7 @@ class HotelController {
       const sort = req.query.sort || 1;
       const page = req.query.page || 1;
       const groupBy = (x, f) =>
-        x.reduce((a, b, i) => ((a[f(b, i, x)]||=[]).push(b), a), {});
+        x.reduce((a, b, i) => ((a[f(b, i, x)] ||= []).push(b), a), {});
 
       let category = req.query.category;
 
