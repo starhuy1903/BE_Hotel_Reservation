@@ -84,7 +84,7 @@ const getHistory = async (userId) => {
     },
     { $unwind: "$servedRoom" },
     { $match: { userId: mongoose.Types.ObjectId(userId) } },
-    {$project: {statusName: "$reservationStatus.reservationStatusCatalog.statusName", startDate: 1, endDate: 1, discountPercent: 1, totalPrice: 1, roomName: "$servedRoom.room.room_name", hotelName: "$servedRoom.room.hotel.name"}}
+    {$project: {statusName: "$reservationStatus.reservationStatusCatalog.statusName", startDate: 1, endDate: 1, discountPercent: 1, totalPrice: 1, roomName: "$servedRoom.room.room_name", hotelName: "$servedRoom.room.hotel.name", createdAt: 1}}
   ]);
 };
 
