@@ -23,6 +23,7 @@ class AuthController {
         phoneNumber: Joi.number().required(),
         firstName: Joi.string().required(),
         lastName: Joi.string().required(),
+        address: Joi.string().required()
       });
       const { error } = schema.validate(req.body);
       if (error) return next(error);
@@ -51,7 +52,7 @@ class AuthController {
 
       await newUser.save();
       const newToken = new verifyToken({
-        user_id: user._id,
+        user_id: newUser._id,
         key: crypto.randomBytes(32).toString("hex"),
       });
 
