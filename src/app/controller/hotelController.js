@@ -131,7 +131,7 @@ class HotelController{
             const column = req.query.column || "name"
             const sort = req.query.sort || 1
             const page = req.query.page || 1
-            const groupBy = (x,f)=>x.reduce((a,b,i)=>((a[f(b,i,x)]||=[]).push(b),a),{})
+            const groupBy = (x,f)=>{x.reduce((a,b,i)=>((a[f(b,i,x)]||[]).push(b),a),{})}
             let category = req.query.category
             if(!category){
                 category = (await Category.find({})).map(category => {return category._id.toString()})
