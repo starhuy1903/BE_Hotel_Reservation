@@ -87,8 +87,8 @@ class ReservationController {
       const servedRooms = (await findRoomServed(startDate, endDate)).map(
         (roomServed) => roomServed.roomId.toString()
       );
-      
-      if( new Date(endDate) === new Date(startDate))  return next(createError(400, "Bad Request"));
+
+      if(new Date(endDate).toString() == new Date(startDate).toString())  return next(createError(400, "Bad Request"));
       
       if (servedRooms.includes(roomId)) {
         return next(createError(400, "Room has been served"));

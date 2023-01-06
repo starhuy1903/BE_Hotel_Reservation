@@ -137,7 +137,7 @@ class AuthController {
       await newToken.save();
 
       // mapping links
-      const link = `${process.env.BASE_URL}user/password-reset/${user._id}/${newToken.key}`;
+      const link = `${process.env.BASE_URL}auth/reset-password/${user._id}/${newToken.key}`;
 
       // send email
       await sendMail(user.email, "Password Reset", link);
