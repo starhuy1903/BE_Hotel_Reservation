@@ -5,6 +5,7 @@ const getHistory = async (userId) => {
     {
       $lookup: {
         from: "reservation_status_events",
+        from: "reservation_status_events",
         let: { reservationId: "$_id" },
         pipeline: [
           {
@@ -16,18 +17,23 @@ const getHistory = async (userId) => {
             $lookup: {
               from: "reservation_status_catalogs",
               let: { reservationCatalogId: "$reservationStatusCatalogId" },
+              from: "reservation_status_catalogs",
+              let: { reservationCatalogId: "$reservationStatusCatalogId" },
               pipeline: [
                 {
                   $match: {
                     $expr: {
+                      $and: [{ $eq: ["$$reservationCatalogId", "$_id"] }],
                       $and: [{ $eq: ["$$reservationCatalogId", "$_id"] }],
                     },
                   },
                 },
               ],
               as: "reservationStatusCatalog",
+              as: "reservationStatusCatalog",
             },
           },
+          { $unwind: "$reservationStatusCatalog" },
           { $unwind: "$reservationStatusCatalog" },
         ],
         as: "reservationStatus",

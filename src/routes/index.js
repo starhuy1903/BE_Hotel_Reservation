@@ -21,6 +21,7 @@ const route = (app) => {
   app.use("/reservationStatus", verify.verifyToken, reservationEventsRoute);
   app.use("/reservationCatalog", verify.verifyToken, reservationCatalogRoute);
   app.use("/roomType", verify.verifyToken, roomTypeRoute);
+  
   app.use((err, req, res, next) => {
     errorStatus = err.status || 500;
     errMessage = err.message || "Something went wrong";

@@ -66,7 +66,7 @@ class HotelController {
     }
   }
 
-  async getAllHotel(req, res, next) {
+  getAllHotel = async (req, res, next) => {
     try {
       const { maxPrice, minPrice} = req.query;
       const column = req.query.column || "name";
