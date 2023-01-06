@@ -1,6 +1,5 @@
 const dotenv = require("dotenv");
 dotenv.config();
-
 const path = require("path");
 const express = require("express");
 const app = express();
@@ -15,6 +14,7 @@ const {
   updateSuccessReservation,
   updatePendingReservation,
 } = require("./app/service/reservationStatus");
+const bodyParser = require("body-parser");
 
 cron.schedule("* * * * *", () => updateSuccessReservation());
 cron.schedule("* * * * *", () => updatePendingReservation());
@@ -27,8 +27,15 @@ app.use(
   })
 );
 
+const adminRoute = require("./routes/admin");
+app.use("/admin", adminRoute)
+
 //HTTP logger
 const morgan = require("morgan");
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+app.use(bodyParser.json());
 app.use(morgan("combined"));
 
 // Cross Origin Resource Sharing

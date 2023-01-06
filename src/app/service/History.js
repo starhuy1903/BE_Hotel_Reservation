@@ -4,7 +4,7 @@ const getHistory = async (userId) => {
   return Reservation.aggregate([
     {
       $lookup: {
-        from: "reservationstatusevents",
+        from: "reservation_status_events",
         let: { reservationId: "$_id" },
         pipeline: [
           {
@@ -14,27 +14,27 @@ const getHistory = async (userId) => {
           },
           {
             $lookup: {
-              from: "reservation status catelogs",
-              let: { reservationCatelogId: "$reservationStatusCatalogId" },
+              from: "reservation_status_catalogs",
+              let: { reservationCatalogId: "$reservationStatusCatalogId" },
               pipeline: [
                 {
                   $match: {
                     $expr: {
-                      $and: [{ $eq: ["$$reservationCatelogId", "$_id"] }],
+                      $and: [{ $eq: ["$$reservationCatalogId", "$_id"] }],
                     },
                   },
                 },
               ],
-              as: "reservationStatusCatelog",
+              as: "reservationStatusCatalog",
             },
           },
-          { $unwind: "$reservationStatusCatelog" },
+          { $unwind: "$reservationStatusCatalog" },
         ],
         as: "reservationStatus",
       },
     },
     { $match: { userId: mongoose.Types.ObjectId(userId) } },
-    //{$project: {statusName: "$reservationStatus.reservationStatusCatelog.statusName", userId: 1, startDate: 1, endDate: 1, discountPercent: 1, totalPrice: 1}}
+    //{$project: {statusName: "$reservationStatus.reservationStatusCatalog.statusName", userId: 1, startDate: 1, endDate: 1, discountPercent: 1, totalPrice: 1}}
   ]);
 };
 

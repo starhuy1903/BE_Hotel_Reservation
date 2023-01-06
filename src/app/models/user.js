@@ -10,7 +10,7 @@ const userSchema = new Schema(
     email: { type: String, required: true, unique: true },
     phoneNumber: { type: String },
     address: { type: String },
-    roles: { type: [String] },
+    roles: { type: [String], enum: ['admin', 'user', 'business'], required: true },
     isActive: { type: Boolean },
     verified: { type: Boolean },
   },
