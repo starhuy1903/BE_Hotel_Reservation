@@ -23,7 +23,7 @@ class AuthController {
         phoneNumber: Joi.number().required(),
         firstName: Joi.string().required(),
         lastName: Joi.string().required(),
-        address: Joi.string().required()
+        //address: Joi.string().required()
       });
       const { error } = schema.validate(req.body);
       if (error) return next(error);
@@ -59,7 +59,7 @@ class AuthController {
       await newToken.save();
 
       // mapping links
-      const link = `${process.env.BASE_URL}user/verify/${newUser._id}/${newToken.key}`;
+      const link = `${process.env.BASE_URL}auth/verify/${newUser._id}/${newToken.key}`;
       // send email
       await sendMail(newUser.email, "Verify Email", link);
       res.status(201).send("Create new user successfully");

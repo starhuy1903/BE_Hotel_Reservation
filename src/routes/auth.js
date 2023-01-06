@@ -2,7 +2,13 @@ const express = require("express");
 const router = express.Router();
 const authController = require("../app/controller/authController");
 const verify = require("../middleware/verifyToken");
+const userController = require("../app/controller/userController");
 
+//RESET PASSWORD
+router.post("/reset-password/:id/:key", userController.resetPassword);
+
+//VERIFY EMAIL
+router.get("/verify/:id/:key", userController.verifyEmailUser);
 //REGISTER
 router.post("/register", authController.register);
 

@@ -5,11 +5,6 @@ const userController = require("../app/controller/userController");
 const verifyRoles = require("../middleware/verifyRoles");
 const ROLES_LIST = require("../config/allowedRoles");
 const fileUploader = require("../config/cloudinary");
-//RESET PASSWORD
-router.post("/reset-password/:id/:key", userController.resetPassword);
-
-//VERIFY EMAIL
-router.get("/verify/:id/:key", userController.verifyEmailUser);
 
 //UPDATE BY ADMIN
 router.put(
