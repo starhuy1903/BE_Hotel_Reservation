@@ -1,8 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const reservationController = require("../app/controller/reservationController");
+const statusEventController = require("../app/controller/statusEventController");
 const verifyRoles = require("../middleware/verifyRoles");
 const ROLES_LIST = require("../config/allowedRoles");
+
+//DELETE
+router.delete(
+  "/cancel/:reservationId",
+  statusEventController.cancelReservationStatus
+);
 
 //DELETE
 router.delete(

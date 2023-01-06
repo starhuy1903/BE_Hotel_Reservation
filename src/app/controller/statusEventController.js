@@ -1,4 +1,5 @@
 const ReservationEvent = require("../models/reservationStatusEvent");
+const ReservationCatalog = require("../models/reservationCatalog");
 const createError = require("../../utils/error");
 class ReservationEventController {
   index(req, res) {
@@ -64,7 +65,7 @@ class ReservationEventController {
       const reservationEvent = await ReservationEvent.findOne({
         reservationId: req.params.reservationId,
       });
-      const cancelReservationEvent = await ReservationCatelog.findOne({
+      const cancelReservationEvent = await ReservationCatalog.findOne({
         statusName: "cancel",
       });
       const updatedReservationEvent = await ReservationEvent.findByIdAndUpdate(
