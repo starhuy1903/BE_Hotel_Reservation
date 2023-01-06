@@ -152,6 +152,7 @@ class UserController {
 
   async resetPassword(req, res, next) {
     try {
+      console.log(req.body.password);
       const user = await User.findOne({ _id: req.params.id });
       if (!user) return next(createError(400, "Invalid link"));
 

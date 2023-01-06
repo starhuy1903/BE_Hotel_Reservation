@@ -122,6 +122,7 @@ class AuthController {
   };
   sendEmailResetPassword = async (req, res, next) => {
     try {
+      console.log(req.body.email);
       const schema = Joi.object({ email: Joi.string().email().required() });
       const { error } = schema.validate(req.body);
       if (error) return next(createError(403, error.details[0].message));
@@ -137,8 +138,7 @@ class AuthController {
       await newToken.save();
 
       // mapping links
-      const link = `${process.env.BASE_URL}auth/reset-password/${user._id}/${newToken.key}`;
-
+      const link = `http://localhost:3000/ForgotPassword/${user._id}/${newToken.key}`;
       // send email
       await sendMail(user.email, "Password Reset", link);
       res.status(200).send("Password reset link has been sent to your email");
