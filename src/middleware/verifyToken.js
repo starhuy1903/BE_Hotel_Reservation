@@ -10,7 +10,7 @@ const verifyToken = (req, res, next) => {
     if (err) {
       if (err.name === "JsonWebTokenError")
         return next(createError(401, "Token is not valid"));
-      return next(createError(401, err.message));
+      return next(createError(403, err.message));
     }
     req.user = user;
     next();
@@ -25,8 +25,8 @@ const verifyRefreshToken = (req, res, next) => {
   jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
     if (err) {
       if (err.name === "JsonWebTokenError")
-        return next(createError(401, err.message));
-      return next(createError(401, err.message));
+        return next(createError(403, err.message));
+      return next(createError(403, err.message));
     }
     redis.get(user.id, (err, reply) => {
       if (err) return next(createError(500, "Internal Sever Error"));

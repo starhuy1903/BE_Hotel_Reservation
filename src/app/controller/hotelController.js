@@ -219,7 +219,11 @@ class HotelController {
       //FIND AVAILABLE HOTEL
       const others = {}
       if(req.query.city){
-        others.city=req.query.city
+        let sentence = req.query.city.toLowerCase().split(" ");
+        for(var i = 0; i< sentence.length; i++){
+          sentence[i] = sentence[i][0].toUpperCase() + sentence[i].slice(1);
+        }
+        others.city=sentence.join(" ");
       }
       const availableHotels = (await Hotel.aggregate([
         {

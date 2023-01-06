@@ -87,6 +87,9 @@ class ReservationController {
       const servedRooms = (await findRoomServed(startDate, endDate)).map(
         (roomServed) => roomServed.roomId.toString()
       );
+      
+      if( new Date(endDate) === new Date(startDate))  return next(createError(400, "Bad Request"));
+      
       if (servedRooms.includes(roomId)) {
         return next(createError(400, "Room has been served"));
       }
@@ -130,7 +133,6 @@ class ReservationController {
       await reservationEvent.save();
       res.status(200).json(reservation);
     } catch (err) {
-      console.log(err);
       next(err);
     }
   };

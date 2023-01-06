@@ -71,7 +71,6 @@ class RoomController {
 
       res.status(200).json(room[0]);
     } catch (err) {
-      console.log(err);
       next(err);
     }
   };

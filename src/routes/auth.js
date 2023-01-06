@@ -20,7 +20,7 @@ router.post("/email-reset-password", authController.sendEmailResetPassword);
 
 //CREATE NEW TOKEN
 router.post(
-  "/refresh-token",
+  "/refresh",
   verify.verifyRefreshToken,
   authController.refreshToken
 );
