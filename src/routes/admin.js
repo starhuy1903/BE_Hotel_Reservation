@@ -46,9 +46,9 @@ const adminBro = new AdminBro({
           address: {},
           roles: {   
             availableValues: [
-              { value: "admin", label: "Admin" },
-              { value: "user", label: "User" },
-              { value: "business", label: "Business" },
+              { value: "1001", label: "Admin" },
+              { value: "2002", label: "User" },
+              { value: "3003", label: "Business" },
             ]
           },
           isActive: {},

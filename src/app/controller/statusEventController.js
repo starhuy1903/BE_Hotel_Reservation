@@ -62,6 +62,7 @@ class ReservationEventController {
 
   async cancelReservationStatus(req, res, next) {
     try {
+      console.log(req.params.reservationId);
       const reservationEvent = await ReservationEvent.findOne({
         reservationId: req.params.reservationId,
       });

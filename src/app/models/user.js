@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const ROLES_LIST = require("../../config/allowedRoles");
 
 const userSchema = new Schema(
   {
@@ -10,7 +11,7 @@ const userSchema = new Schema(
     email: { type: String, required: true, unique: true },
     phoneNumber: { type: String },
     address: { type: String },
-    roles: { type: [String], enum: ['admin', 'user', 'business'], required: true },
+    roles: { type: [String], enum: [ROLES_LIST.Admin, ROLES_LIST.User, ROLES_LIST.Business], required: true },
     isActive: { type: Boolean },
     verified: { type: Boolean },
   },
