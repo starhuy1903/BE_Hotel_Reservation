@@ -1,27 +1,44 @@
-const express = require('express')
-const router = express.Router()
-const reservationController = require("../app/controller/reservationController")
-const verify = require("../middleware/verifyToken")
-const verifyRoles = require("../middleware/verifyRoles")
-const ROLES_LIST = require("../config/allowedRoles")
-
+const express = require("express");
+const router = express.Router();
+const reservationController = require("../app/controller/reservationController");
+const statusEventController = require("../app/controller/statusEventController");
+const verifyRoles = require("../middleware/verifyRoles");
+const ROLES_LIST = require("../config/allowedRoles");
 
 //DELETE
-router.delete("/:id", verifyRoles(ROLES_LIST.Admin), reservationController.deleteReservation)
+router.delete(
+  "/cancel/:reservationId",
+  statusEventController.cancelReservationStatus
+);
+
+//DELETE
+router.delete(
+  "/:id",
+  verifyRoles(ROLES_LIST.Admin),
+  reservationController.deleteReservation
+);
 
 //UPDATE
-router.put("/:id", verifyRoles(ROLES_LIST.Admin), reservationController.updateReservation)
+router.put(
+  "/:id",
+  verifyRoles(ROLES_LIST.Admin),
+  reservationController.updateReservation
+);
 
 //GET
-router.get("/:id", reservationController.getReservation)
+router.get("/:id", reservationController.getReservation);
 
 //GETALL
-router.get("/", reservationController.getAllReservation)
+router.get("/", reservationController.getAllReservation);
 
 //RESERVATION
-router.post("/", reservationController.reservation)
+router.post("/", reservationController.reservation);
 
 //CREATE
-router.post("/", verifyRoles(ROLES_LIST.Admin), reservationController.createReservation)
+router.post(
+  "/",
+  verifyRoles(ROLES_LIST.Admin),
+  reservationController.createReservation
+);
 
-module.exports = router
+module.exports = router;

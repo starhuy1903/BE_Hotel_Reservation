@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const roomServedSchema = new Schema(
+const servedRoomSchema = new Schema(
   {
     roomId: { type: Schema.ObjectId, required: true },
     reservationId: { type: Schema.ObjectId, required: true },
@@ -10,4 +10,4 @@ const roomServedSchema = new Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Room Served", roomServedSchema);
+module.exports = mongoose.model("served_room", servedRoomSchema);

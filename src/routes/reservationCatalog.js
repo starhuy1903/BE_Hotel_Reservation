@@ -1,43 +1,43 @@
 const express = require("express");
 const router = express.Router();
-const statusEventController = require("../app/controller/statusEventController");
+const reservationCatalogController = require("../app/controller/reservationCatalogController");
 
 const verifyRoles = require("../middleware/verifyRoles");
 const ROLES_LIST = require("../config/allowedRoles");
-
-//GET
-router.get(
-  "/:id",
-  verifyRoles(ROLES_LIST.Admin),
-  statusEventController.getReservationStatusEvent
-);
 
 //DELETE
 router.delete(
   "/:id",
   verifyRoles(ROLES_LIST.Admin),
-  statusEventController.deleteReservationStatusEvent
+  reservationCatalogController.deleteReservationCatalog
 );
 
 //UPDATE
 router.put(
   "/:id",
   verifyRoles(ROLES_LIST.Admin),
-  statusEventController.updateReservationStatusEvent
+  reservationCatalogController.updateReservationCatalog
+);
+
+//GET
+router.get(
+  "/:id",
+  verifyRoles(ROLES_LIST.Admin),
+  reservationCatalogController.getReservationCatalog
 );
 
 //GETALL
 router.get(
   "/",
   verifyRoles(ROLES_LIST.Admin),
-  statusEventController.getAllReservationStatusEvent
+  reservationCatalogController.getAllReservationCatalog
 );
 
 //CREATE
 router.post(
   "/",
   verifyRoles(ROLES_LIST.Admin),
-  statusEventController.createReservationStatusEvent
+  reservationCatalogController.createReservationCatalog
 );
 
 module.exports = router;
